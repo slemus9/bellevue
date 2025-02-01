@@ -11,9 +11,9 @@ inThisBuild(
 
 lazy val root = project
   .in(file("."))
-  .aggregate(gueuzeFrontEnd)
+  .aggregate(bellevueFrontEnd)
 
-lazy val gueuzeFrontEnd = module("gueuze-front-end")
+lazy val bellevueFrontEnd = module("bellevue-front-end")
   .enablePlugins(ScalaJSPlugin)
   .settings(
     libraryDependencies ++= Seq(
