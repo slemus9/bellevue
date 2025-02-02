@@ -1,43 +1,56 @@
 package bellevue
 
+import bellevue.commands.*
+import bellevue.domain.*
+import bellevue.subscription.Subscription
+import cats.effect.IO
 import tyrian.*
 import tyrian.Html.*
-import cats.effect.IO
+
 import scala.scalajs.js.annotation.JSExportTopLevel
 
 @JSExportTopLevel("BelleVueApp")
-object Main extends TyrianIOApp[Msg, Model]:
+object Main extends TyrianIOApp[Msg, DrawingModel]:
 
   override def router: Location => Msg = Routing.none(Msg.Noop)
 
-  override def init(flags: Map[String, String]): (Model, Cmd[IO, Msg]) =
-    Counter.zero -> Cmd.None
+  override def init(flags: Map[String, String]): (DrawingModel, Cmd[IO, Msg]) =
+    DrawingModel.init -> Cmd.None
 
-  override def update(model: Model): Msg => (Model, Cmd[IO, Msg]) =
-    case Msg.Inc  => model.inc -> Cmd.None
-    case Msg.Dec  => model.dec -> Cmd.None
-    case Msg.Noop => model     -> Cmd.None
+  override def update(model: DrawingModel): Msg => (DrawingModel, Cmd[IO, Msg]) =
+    case Msg.DrawLineStart(from) =>
+      model.updateLinePosition(from).enableLineDrawing -> Command.initLineDrawing(
+        color = "green",
+        lineWidth = 2
+      )
 
-  override def view(model: Model): Html[Msg] =
-    div(id := "counter")(
-      button(onClick(Msg.Dec))("-"),
-      div()(model.toString),
-      button(onClick(Msg.Inc))("+")
+    case Msg.DrawLineTo(to) if model.isDrawingLine =>
+      model.updateLinePosition(to) -> Command.drawLineSegment(
+        from = model.linePosition,
+        to = to
+      )
+
+    case Msg.DrawLineEnd =>
+      model.disableLineDrawing -> Cmd.None
+
+    case _ =>
+      model -> Cmd.None
+
+  override def view(model: DrawingModel): Html[Msg] =
+    div(id := "bellevue")(
+      canvas(
+        id     := DrawingCanvas.id,
+        width  := 500,
+        height := 300,
+        style  := "border:1px solid #000000;"
+      )()
     )
 
-  override def subscriptions(model: Model): Sub[IO, Msg] =
-    Sub.None
+  override def subscriptions(model: DrawingModel): Sub[IO, Msg] =
+    Sub.Batch(
+      Subscription.mouseDown,
+      Subscription.mouseMove,
+      Subscription.mouseUp
+    )
 
-type Model = Counter
-
-opaque type Counter <: Int = Int
-
-object Counter:
-  val zero: Counter = 0
-
-  extension (counter: Counter)
-    def inc: Counter = counter + 1
-    def dec: Counter = counter - 1
-
-enum Msg:
-  case Inc, Dec, Noop
+end Main

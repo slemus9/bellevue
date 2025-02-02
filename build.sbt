@@ -17,7 +17,8 @@ lazy val bellevueFrontEnd = module("bellevue-front-end")
   .enablePlugins(ScalaJSPlugin)
   .settings(
     libraryDependencies ++= Seq(
-      "io.indigoengine" %%% "tyrian-io" % "0.12.0"
+      "io.indigoengine" %%% "tyrian-io"   % "0.12.0",
+      "org.scala-js"    %%% "scalajs-dom" % "2.2.0"
     ),
     scalaJSLinkerConfig ~= { _.withModuleKind(ModuleKind.CommonJSModule) }
   )
