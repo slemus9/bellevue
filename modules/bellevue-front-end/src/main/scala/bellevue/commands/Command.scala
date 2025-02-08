@@ -1,6 +1,6 @@
 package bellevue.commands
 
-import bellevue.domain.{DrawingModel, Point}
+import bellevue.domain.*
 import cats.effect.IO
 import org.scalajs.dom
 import tyrian.Cmd
@@ -17,11 +17,11 @@ object Command:
       canvas.height = parentBox.height.toInt
       context.putImageData(currentDrawing, 0, 0)
 
-  def setLineStyle(model: DrawingModel): Cmd[IO, Nothing] =
+  def setLineStyle(config: BrushConfig): Cmd[IO, Nothing] =
     Cmd.SideEffect:
       DrawingCanvas.get.context2d.lineCap = "round"
-      DrawingCanvas.get.context2d.strokeStyle = model.lineColor
-      DrawingCanvas.get.context2d.lineWidth = 2
+      DrawingCanvas.get.context2d.strokeStyle = config.color
+      DrawingCanvas.get.context2d.lineWidth = config.lineWidth
 
   def drawLineSegment(from: Point, to: Point): Cmd[IO, Nothing] =
     val canvas = DrawingCanvas.get

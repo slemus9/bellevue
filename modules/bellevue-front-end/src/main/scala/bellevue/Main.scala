@@ -5,7 +5,9 @@ import bellevue.domain.*
 import bellevue.html.BellevueHtml
 import bellevue.subscription.Subscription
 import cats.effect.IO
+import monocle.syntax.all.*
 import tyrian.*
+import tyrian.cmds.Logger
 
 import scala.scalajs.js.annotation.JSExportTopLevel
 
@@ -18,26 +20,36 @@ object Main extends TyrianIOApp[Msg, DrawingModel]:
     DrawingModel.init -> Cmd.None
 
   override def update(model: DrawingModel): Msg => (DrawingModel, Cmd[IO, Msg]) =
-    case Msg.LoadedElement(DrawingModel.CanvasId) =>
+
+    case Msg.Partial(Left(error)) =>
+      model -> Logger.error[IO](error)
+
+    case Msg.Partial(Right(msg)) =>
+      model -> Cmd.Run(IO.pure(msg))
+
+    case Msg.LoadedElement(BellevueHtml.CanvasId) =>
       model -> Command.resizeCanvas
 
     case Msg.ResizeCanvas =>
       model -> Command.resizeCanvas
 
     case Msg.PickColor(color) =>
-      model.setLineColor(color) -> Cmd.None
+      model.focus(_.brushConfig.color).replace(color) -> Cmd.None
+
+    case Msg.PickBrushSize(size) =>
+      model.focus(_.brushConfig.lineWidth).replace(size) -> Cmd.None
 
     case Msg.DrawLineStart(from) =>
-      model.updateLinePosition(from).enableLineDrawing -> Command.setLineStyle(model)
+      model.copy(linePosition = from, isDrawingLine = true) -> Command.setLineStyle(model.brushConfig)
 
     case Msg.DrawLineTo(to) if model.isDrawingLine =>
-      model.updateLinePosition(to) -> Command.drawLineSegment(
+      model.copy(linePosition = to) -> Command.drawLineSegment(
         from = model.linePosition,
         to = to
       )
 
     case Msg.DrawLineEnd =>
-      model.disableLineDrawing -> Cmd.None
+      model.copy(isDrawingLine = false) -> Cmd.None
 
     case _ =>
       model -> Cmd.None
@@ -51,7 +63,7 @@ object Main extends TyrianIOApp[Msg, DrawingModel]:
       Subscription.mouseMove,
       Subscription.mouseUp,
       Subscription.resize,
-      Subscription.waitForElement(DrawingModel.CanvasId)
+      Subscription.waitForElement(BellevueHtml.CanvasId)
     )
 
 end Main
