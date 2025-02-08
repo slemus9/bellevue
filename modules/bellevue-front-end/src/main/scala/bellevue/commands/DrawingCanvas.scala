@@ -1,18 +1,15 @@
 package bellevue.commands
 
-import bellevue.domain.Point
-import org.scalajs.dom.document
+import bellevue.domain.{DrawingModel, Point}
+import org.scalajs.dom.{document, CanvasRenderingContext2D}
 import org.scalajs.dom.html.Canvas
-import org.scalajs.dom.CanvasRenderingContext2D
 
 opaque type DrawingCanvas <: Canvas = Canvas
 
 object DrawingCanvas:
 
-  val id = "drawing-canvas"
-
   def get: DrawingCanvas =
-    document.getElementById(id).asInstanceOf[Canvas]
+    document.getElementById(DrawingModel.CanvasId).asInstanceOf[Canvas]
 
   extension (canvas: DrawingCanvas)
     def context2d = canvas.getContext("2d").asInstanceOf[CanvasRenderingContext2D]
