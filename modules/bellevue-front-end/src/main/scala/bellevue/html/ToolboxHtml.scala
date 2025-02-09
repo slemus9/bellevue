@@ -11,7 +11,11 @@ final class ToolboxHtml(model: DrawingModel):
     div(id := "toolbox", className := "toolbox-container")(
       (viewBrushColorInput
         ++ viewBrushSizeInput
-        ++ List(viewEraserButton))*
+        ++ List(
+          viewBrushButton,
+          viewRectangleButton,
+          viewEraserButton
+        ))*
     )
 
   private lazy val viewBrushColorInput: List[Html[Msg]] =
@@ -40,5 +44,13 @@ final class ToolboxHtml(model: DrawingModel):
       )
     )
 
+  private lazy val viewBrushButton: Html[Msg] =
+    button(onClick(ToolboxMsg.PickTool(Tool.Brush)))("Brush")
+
+  private lazy val viewRectangleButton: Html[Msg] =
+    button(onClick(ToolboxMsg.PickTool(Tool.Rectangle)))("Rectangle")
+
   private lazy val viewEraserButton: Html[Msg] =
-    button(onClick(EraserMsg.Enable))("Eraser")
+    button(onClick(ToolboxMsg.PickTool(Tool.Eraser)))("Eraser")
+
+end ToolboxHtml

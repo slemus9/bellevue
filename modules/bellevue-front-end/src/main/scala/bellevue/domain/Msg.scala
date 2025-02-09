@@ -1,6 +1,6 @@
 package bellevue.domain
 
-type Msg = BrushMsg | ControlMsg | EraserMsg | ToolboxMsg
+type Msg = ControlMsg | MouseMsg | ToolboxMsg
 
 enum ControlMsg:
   case Partial(parsedMsg: Either[String, Msg])
@@ -8,14 +8,12 @@ enum ControlMsg:
   case ResizeCanvas
   case NoAction
 
-enum EraserMsg:
-  case Enable
-
-enum BrushMsg:
-  case Start(point: Point)
-  case To(point: Point)
-  case End
+enum MouseMsg:
+  case MouseDown(point: Point)
+  case MouseMove(point: Point)
+  case MouseUp(point: Point)
 
 enum ToolboxMsg:
-  case PickColor(color: String)
   case PickBrushSize(size: Pixels)
+  case PickColor(color: String)
+  case PickTool(tool: Tool)

@@ -38,3 +38,14 @@ object Command:
       context.moveTo(from.x, from.y)
       context.lineTo(to.x, to.y)
       context.stroke()
+
+  def drawRectangle(topLeft: Point, bottomRight: Point): Cmd[IO, Nothing] =
+    Cmd.SideEffect:
+      DrawingCanvas.get.context2d.strokeRect(
+        x = topLeft.x,
+        y = topLeft.y,
+        w = bottomRight.x - topLeft.x,
+        h = bottomRight.y - topLeft.y
+      )
+
+end Command

@@ -1,4 +1,4 @@
-package bellevue.subscription
+package bellevue.subscriptions
 
 import bellevue.domain.*
 import cats.effect.IO
@@ -11,17 +11,17 @@ object Subscription:
 
   val mouseDown: Sub[IO, Msg] =
     Sub.fromEvent("mousedown", dom.document):
-      case event: dom.MouseEvent => Some(BrushMsg.Start(Point(event.clientX, event.clientY)))
+      case event: dom.MouseEvent => Some(MouseMsg.MouseDown(Point(event.clientX, event.clientY)))
       case _                     => None
 
   val mouseMove: Sub[IO, Msg] =
     Sub.fromEvent("mousemove", dom.document):
-      case event: dom.MouseEvent => Some(BrushMsg.To(Point(event.clientX, event.clientY)))
+      case event: dom.MouseEvent => Some(MouseMsg.MouseMove(Point(event.clientX, event.clientY)))
       case _                     => None
 
   val mouseUp: Sub[IO, Msg] =
     Sub.fromEvent("mouseup", dom.document):
-      case event: dom.MouseEvent => Some(BrushMsg.End)
+      case event: dom.MouseEvent => Some(MouseMsg.MouseUp(Point(event.clientX, event.clientY)))
       case _                     => None
 
   val resize: Sub[IO, Msg] =
