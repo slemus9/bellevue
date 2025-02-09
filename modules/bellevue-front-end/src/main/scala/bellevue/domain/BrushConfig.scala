@@ -10,6 +10,8 @@ final case class BrushConfig(
 
 object BrushConfig:
 
+  val EraserColor = "#ffffff"
+
   val init = BrushConfig(
     color = "#0047AB",
     lineWidth = Pixels(2)

@@ -1,12 +1,21 @@
 package bellevue.domain
 
-enum Msg:
-  case DrawLineStart(from: Point)
-  case DrawLineTo(to: Point)
-  case DrawLineEnd
+type Msg = BrushMsg | ControlMsg | EraserMsg | ToolboxMsg
+
+enum ControlMsg:
+  case Partial(parsedMsg: Either[String, Msg])
+  case HtmlElementLoaded(id: String)
+  case ResizeCanvas
+  case NoAction
+
+enum EraserMsg:
+  case Enable
+
+enum BrushMsg:
+  case Start(point: Point)
+  case To(point: Point)
+  case End
+
+enum ToolboxMsg:
   case PickColor(color: String)
   case PickBrushSize(size: Pixels)
-  case ResizeCanvas
-  case LoadedElement(elementId: String)
-  case Partial(parsed: Either[String, Msg])
-  case NoAction

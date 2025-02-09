@@ -9,7 +9,9 @@ final class ToolboxHtml(model: DrawingModel):
 
   lazy val view: Html[Msg] =
     div(id := "toolbox", className := "toolbox-container")(
-      (viewBrushColorInput ++ viewBrushSizeInput)*
+      (viewBrushColorInput
+        ++ viewBrushSizeInput
+        ++ List(viewEraserButton))*
     )
 
   private lazy val viewBrushColorInput: List[Html[Msg]] =
@@ -18,13 +20,13 @@ final class ToolboxHtml(model: DrawingModel):
       input(
         `type` := "color",
         value  := model.brushConfig.color,
-        onChange(Msg.PickColor.apply)
+        onChange(ToolboxMsg.PickColor.apply)
       )
     )
 
   private lazy val viewBrushSizeInput: List[Html[Msg]] =
     def buildMessage(str: String) =
-      Msg.Partial(Pixels.parse(str).map(Msg.PickBrushSize.apply))
+      ControlMsg.Partial(Pixels.parse(str).map(ToolboxMsg.PickBrushSize.apply))
 
     List(
       span("Brush Size: "),
@@ -37,3 +39,6 @@ final class ToolboxHtml(model: DrawingModel):
         BrushConfig.lineWidths.map(size => option(size.show))
       )
     )
+
+  private lazy val viewEraserButton: Html[Msg] =
+    button(onClick(EraserMsg.Enable))("Eraser")

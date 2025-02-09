@@ -1,6 +1,6 @@
 package bellevue.subscription
 
-import bellevue.domain.{Msg, Point}
+import bellevue.domain.*
 import cats.effect.IO
 import org.scalajs.dom
 import tyrian.Sub
@@ -11,22 +11,22 @@ object Subscription:
 
   val mouseDown: Sub[IO, Msg] =
     Sub.fromEvent("mousedown", dom.document):
-      case event: dom.MouseEvent => Some(Msg.DrawLineStart(Point(event.clientX, event.clientY)))
+      case event: dom.MouseEvent => Some(BrushMsg.Start(Point(event.clientX, event.clientY)))
       case _                     => None
 
   val mouseMove: Sub[IO, Msg] =
     Sub.fromEvent("mousemove", dom.document):
-      case event: dom.MouseEvent => Some(Msg.DrawLineTo(Point(event.clientX, event.clientY)))
+      case event: dom.MouseEvent => Some(BrushMsg.To(Point(event.clientX, event.clientY)))
       case _                     => None
 
   val mouseUp: Sub[IO, Msg] =
     Sub.fromEvent("mouseup", dom.document):
-      case event: dom.MouseEvent => Some(Msg.DrawLineEnd)
+      case event: dom.MouseEvent => Some(BrushMsg.End)
       case _                     => None
 
   val resize: Sub[IO, Msg] =
     Sub.fromEvent("resize", dom.window):
-      case _ => Some(Msg.ResizeCanvas)
+      case _ => Some(ControlMsg.ResizeCanvas)
 
   def waitForElement(elementId: String): Sub[IO, Msg] =
 
@@ -46,6 +46,6 @@ object Subscription:
         observer
     } { observer =>
       IO(observer.disconnect())
-    } { _ => Some(Msg.LoadedElement(elementId)) }
+    } { _ => Some(ControlMsg.HtmlElementLoaded(elementId)) }
 
 end Subscription
