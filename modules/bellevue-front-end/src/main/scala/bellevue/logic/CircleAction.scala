@@ -5,22 +5,25 @@ import bellevue.domain.*
 import cats.effect.IO
 import tyrian.Cmd
 
-object RectangleAction:
+import scala.math
+
+object CircleAction:
 
   def draw(model: DrawingModel, msg: MouseMsg): (DrawingModel, Cmd[IO, Msg]) = msg match
-    case MouseMsg.MouseDown(from) =>
+    case MouseMsg.MouseDown(center) =>
       (
-        model.copy(isDrawing = true, latestMousePosition = from),
+        model.copy(isDrawing = true, latestMousePosition = center),
         Command.setLineStyle(model.brushConfig)
       )
 
     case MouseMsg.MouseMove(_) => (model, Cmd.None)
 
     case MouseMsg.MouseUp(to) =>
-      val from                   = model.latestMousePosition
-      val (topLeft, bottomRight) = if to.y < from.y then (from, to) else (to, from)
-
+      val center = model.latestMousePosition
+      val deltax = center.x - to.x
+      val deltay = center.y - to.y
+      val radius = math.sqrt(deltax * deltax + deltay * deltay)
       (
         model.copy(isDrawing = false),
-        Command.drawRectangle(topLeft, bottomRight)
+        Command.drawCircle(center, radius)
       )

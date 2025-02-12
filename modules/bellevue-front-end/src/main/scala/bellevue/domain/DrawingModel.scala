@@ -17,4 +17,4 @@ object DrawingModel:
   )
 
 enum Tool:
-  case Brush, Eraser, Rectangle
+  case Brush, Circle, Eraser, Rectangle

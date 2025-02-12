@@ -5,6 +5,8 @@ import cats.effect.IO
 import org.scalajs.dom
 import tyrian.Cmd
 
+import scala.math
+
 object Command:
 
   val resizeCanvas: Cmd[IO, Nothing] =
@@ -19,9 +21,10 @@ object Command:
 
   def setLineStyle(config: BrushConfig): Cmd[IO, Nothing] =
     Cmd.SideEffect:
-      DrawingCanvas.get.context2d.lineCap = "round"
-      DrawingCanvas.get.context2d.strokeStyle = config.color
-      DrawingCanvas.get.context2d.lineWidth = config.lineWidth
+      val context = DrawingCanvas.get.context2d
+      context.lineCap = "round"
+      context.strokeStyle = config.color
+      context.lineWidth = config.lineWidth
 
   def drawLineSegment(from: Point, to: Point): Cmd[IO, Nothing] =
     val canvas = DrawingCanvas.get
@@ -47,5 +50,18 @@ object Command:
         w = bottomRight.x - topLeft.x,
         h = bottomRight.y - topLeft.y
       )
+
+  def drawCircle(center: Point, radius: Double): Cmd[IO, Nothing] =
+    Cmd.SideEffect:
+      val context = DrawingCanvas.get.context2d
+      context.beginPath()
+      context.arc(
+        x = center.x,
+        y = center.y,
+        radius,
+        startAngle = 0,
+        endAngle = 2 * math.Pi
+      )
+      context.stroke()
 
 end Command

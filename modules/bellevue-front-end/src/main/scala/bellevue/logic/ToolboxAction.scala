@@ -12,9 +12,7 @@ object ToolboxAction:
     model.focus(_.brushConfig.lineWidth).replace(size)
 
   def pickTool(model: DrawingModel, tool: Tool): DrawingModel = tool match
-    case Tool.Brush     =>
-      model.copy(selectedTool = Tool.Brush)
-    case Tool.Eraser    =>
+    case Tool.Eraser =>
       model.copy(selectedTool = Tool.Brush).focus(_.brushConfig.color).replace(BrushConfig.EraserColor)
-    case Tool.Rectangle =>
-      model.copy(selectedTool = Tool.Rectangle)
+    case tool        =>
+      model.copy(selectedTool = tool)

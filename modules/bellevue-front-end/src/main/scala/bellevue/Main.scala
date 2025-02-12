@@ -33,6 +33,9 @@ object Main extends TyrianIOApp[Msg, DrawingModel]:
     case msg: MouseMsg if model.selectedTool == Tool.Brush =>
       BrushAction.draw(model, msg)
 
+    case msg: MouseMsg if model.selectedTool == Tool.Circle =>
+      CircleAction.draw(model, msg)
+
     case msg: MouseMsg if model.selectedTool == Tool.Rectangle =>
       RectangleAction.draw(model, msg)
 

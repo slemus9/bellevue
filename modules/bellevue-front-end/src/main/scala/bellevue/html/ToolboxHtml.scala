@@ -13,6 +13,7 @@ final class ToolboxHtml(model: DrawingModel):
         ++ viewBrushSizeInput
         ++ List(
           viewBrushButton,
+          viewCircleButton,
           viewRectangleButton,
           viewEraserButton
         ))*
@@ -46,6 +47,9 @@ final class ToolboxHtml(model: DrawingModel):
 
   private lazy val viewBrushButton: Html[Msg] =
     button(onClick(ToolboxMsg.PickTool(Tool.Brush)))("Brush")
+
+  private lazy val viewCircleButton: Html[Msg] =
+    button(onClick(ToolboxMsg.PickTool(Tool.Circle)))("Circle")
 
   private lazy val viewRectangleButton: Html[Msg] =
     button(onClick(ToolboxMsg.PickTool(Tool.Rectangle)))("Rectangle")
