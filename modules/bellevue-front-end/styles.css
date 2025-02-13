@@ -29,3 +29,13 @@ body {
   border-style: solid;
   border-color: red;
 }
+
+.overlaid-shape {
+  position: absolute;
+  visibility: hidden;
+  border-style: solid;
+  border-color: black;
+  border-width: 1px;
+  width: 1px;
+  height: 1px;
+}
