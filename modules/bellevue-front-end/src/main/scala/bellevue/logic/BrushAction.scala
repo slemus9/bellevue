@@ -7,23 +7,24 @@ import tyrian.Cmd
 
 object BrushAction:
 
-  def draw(model: DrawingModel, msg: MouseMsg): (DrawingModel, Cmd[IO, Msg]) = msg match
-    case MouseMsg.MouseDown(from) =>
-      (
-        model.copy(isDrawing = true, latestMousePosition = from),
-        Command.setLineStyle(model.brushConfig)
-      )
+  def draw(model: DrawingModel, msg: MouseMsg): (DrawingModel, Cmd[IO, Msg]) =
+    (msg, model.mouseDownInterval) match
+      case (MouseMsg.MouseDown(from), None) =>
+        (
+          model.clickMouse(from),
+          Command.setLineStyle(model.brushConfig)
+        )
 
-    case MouseMsg.MouseMove(to) if model.isDrawing =>
-      (
-        model.copy(latestMousePosition = to),
-        Command.drawLineSegment(from = model.latestMousePosition, to)
-      )
+      case (MouseMsg.MouseMove(to), Some(interval)) =>
+        (
+          model.moveMouse(to),
+          Command.drawLineSegment(from = interval.latestPosition, to)
+        )
 
-    case MouseMsg.MouseUp(to) =>
-      (
-        model.copy(isDrawing = false),
-        Command.drawLineSegment(from = model.latestMousePosition, to)
-      )
+      case (MouseMsg.MouseUp(to), Some(interval)) =>
+        (
+          model.releaseMouse,
+          Command.drawLineSegment(from = interval.latestPosition, to)
+        )
 
-    case _ => (model, Cmd.None)
+      case _ => (model, Cmd.None)
