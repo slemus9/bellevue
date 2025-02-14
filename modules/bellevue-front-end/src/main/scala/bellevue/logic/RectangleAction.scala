@@ -7,20 +7,24 @@ import tyrian.Cmd
 
 object RectangleAction:
 
-  def draw(model: DrawingModel, msg: MouseMsg): (DrawingModel, Cmd[IO, Msg]) = msg match
-    case MouseMsg.MouseDown(from) =>
-      (
-        model.copy(isDrawing = true, latestMousePosition = from),
-        Command.setLineStyle(model.brushConfig)
-      )
+  def draw(model: DrawingModel, msg: MouseMsg): (DrawingModel, Cmd[IO, Msg]) =
+    (msg, model.mouseDownInterval) match
+      case (MouseMsg.MouseDown(from), None) =>
+        (
+          model.clickMouse(from),
+          Command.setLineStyle(model.brushConfig) |+| Command.placeOverlaidRectange(from)
+        )
 
-    case MouseMsg.MouseMove(_) => (model, Cmd.None)
+      case (MouseMsg.MouseMove(to), Some(interval)) =>
+        (
+          model.moveMouse(to),
+          Command.growOverlaidRectangle(from = interval.startPosition, to)
+        )
 
-    case MouseMsg.MouseUp(to) =>
-      val from                   = model.latestMousePosition
-      val (topLeft, bottomRight) = if to.y < from.y then (from, to) else (to, from)
+      case (MouseMsg.MouseUp(to), Some(interval)) =>
+        (
+          model.releaseMouse,
+          Command.drawRectangle(from = interval.startPosition, to) |+| Command.hideOverlaidRectangle
+        )
 
-      (
-        model.copy(isDrawing = false),
-        Command.drawRectangle(topLeft, bottomRight)
-      )
+      case _ => (model, Cmd.None)

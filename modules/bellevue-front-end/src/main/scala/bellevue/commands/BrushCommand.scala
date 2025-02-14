@@ -1,0 +1,30 @@
+package bellevue.commands
+
+import bellevue.domain.*
+import cats.effect.IO
+import tyrian.Cmd
+
+trait BrushCommand:
+
+  def setLineStyle(config: BrushConfig): Cmd[IO, Nothing] =
+    Cmd.SideEffect:
+      val context = DrawingCanvas.get.context2d
+      context.lineCap = "round"
+      context.strokeStyle = config.color
+      context.lineWidth = config.lineWidth
+
+  def drawLineSegment(from: Point, to: Point): Cmd[IO, Nothing] =
+    val canvas = DrawingCanvas.get
+    drawLineSegment(
+      canvas,
+      from = canvas.relativePosition(from),
+      to = canvas.relativePosition(to)
+    )
+
+  private def drawLineSegment(canvas: DrawingCanvas, from: Point, to: Point): Cmd[IO, Nothing] =
+    Cmd.SideEffect:
+      val context = canvas.context2d
+      context.beginPath()
+      context.moveTo(from.x, from.y)
+      context.lineTo(to.x, to.y)
+      context.stroke()
