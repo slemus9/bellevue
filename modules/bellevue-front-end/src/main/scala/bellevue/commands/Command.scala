@@ -1,5 +1,6 @@
 package bellevue.commands
 
+import bellevue.domain.Point
 import cats.effect.IO
 import org.scalajs.dom
 import tyrian.Cmd
@@ -15,3 +16,7 @@ object Command extends BrushCommand, CircleCommand, RectangleCommand:
       canvas.width = parentBox.width.toInt
       canvas.height = parentBox.height.toInt
       context.putImageData(currentDrawing, 0, 0)
+
+  def mapToCanvasPosition(point: Point): Cmd[IO, Point] =
+    Cmd.Run:
+      IO(DrawingCanvas.get.relativePosition(point))

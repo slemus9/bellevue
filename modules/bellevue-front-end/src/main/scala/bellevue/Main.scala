@@ -30,6 +30,9 @@ object Main extends TyrianIOApp[Msg, DrawingModel]:
     case ControlMsg.ResizeCanvas | ControlMsg.HtmlElementLoaded(BellevueHtml.CanvasId) =>
       (model, Command.resizeCanvas)
 
+    case ControlMsg.MapToCanvas(point, buildMsg) =>
+      (model, Command.mapToCanvasPosition(point).map(buildMsg))
+
     case msg: MouseMsg if model.selectedTool == Tool.Brush =>
       BrushAction.draw(model, msg)
 

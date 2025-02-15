@@ -22,6 +22,7 @@ trait RectangleCommand:
     Cmd.SideEffect:
       val rectangle = getOverlaidRectangle
       rectangle.style.visibility = "visible"
+      rectangle.style.borderWidth = "1px"
 
   def growOverlaidRectangle(from: Point, to: Point): Cmd[IO, Nothing] =
     Cmd.SideEffect:
@@ -36,6 +37,7 @@ trait RectangleCommand:
     Cmd.SideEffect:
       val rectangle = getOverlaidRectangle
       rectangle.style.visibility = "hidden"
+      rectangle.style.borderWidth = "0px"
       rectangle.style.width = "0px"
       rectangle.style.height = "0px"
 
