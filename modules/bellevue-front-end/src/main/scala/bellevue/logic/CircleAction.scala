@@ -12,14 +12,21 @@ object CircleAction:
       case (MouseMsg.MouseDown(center), None) =>
         (
           model.clickMouse(center),
-          Command.setLineStyle(model.brushConfig)
+          Command.setLineStyle(model.brushConfig) |+| Command.showOverlaidCircle
+        )
+
+      case (MouseMsg.MouseMove(to), Some(interval)) =>
+        val center = interval.startPosition
+        (
+          model.moveMouse(to),
+          Command.drawOverlaidCircle(center, center.distanceTo(to))
         )
 
       case (MouseMsg.MouseUp(to), Some(interval)) =>
-        val center = interval.latestPosition
+        val center = interval.startPosition
         (
           model.releaseMouse,
-          Command.drawCircle(center, center.distanceTo(to))
+          Command.drawCircle(center, center.distanceTo(to)) |+| Command.hideOverlaidCircle
         )
 
       case _ => (model, Cmd.None)
