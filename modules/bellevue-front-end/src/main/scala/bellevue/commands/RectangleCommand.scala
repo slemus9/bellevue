@@ -18,13 +18,13 @@ trait RectangleCommand:
         h = bottomRight.y - topLeft.y
       )
 
-  def placeOverlaidRectange(topLeft: Point): Cmd[IO, Nothing] =
+  val showOverlaidRectange: Cmd[IO, Nothing] =
     Cmd.SideEffect:
       val rectangle = getOverlaidRectangle
       rectangle.style.visibility = "visible"
       rectangle.style.borderWidth = "1px"
 
-  def growOverlaidRectangle(from: Point, to: Point): Cmd[IO, Nothing] =
+  def drawOverlaidRectangle(from: Point, to: Point): Cmd[IO, Nothing] =
     Cmd.SideEffect:
       val (topLeft, bottomRight) = rectangleCorners(from, to)
       val rectangle              = getOverlaidRectangle

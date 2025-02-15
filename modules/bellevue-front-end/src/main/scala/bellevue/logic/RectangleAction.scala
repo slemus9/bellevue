@@ -12,13 +12,13 @@ object RectangleAction:
       case (MouseMsg.MouseDown(from), None) =>
         (
           model.clickMouse(from),
-          Command.setLineStyle(model.brushConfig) |+| Command.placeOverlaidRectange(from)
+          Command.setLineStyle(model.brushConfig) |+| Command.showOverlaidRectange
         )
 
       case (MouseMsg.MouseMove(to), Some(interval)) =>
         (
           model.moveMouse(to),
-          Command.growOverlaidRectangle(from = interval.startPosition, to)
+          Command.drawOverlaidRectangle(from = interval.startPosition, to)
         )
 
       case (MouseMsg.MouseUp(to), Some(interval)) =>

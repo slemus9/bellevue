@@ -42,3 +42,7 @@ body {
   width: 0px;
   height: 0px;
 }
+
+.circular-shape {
+  border-radius: 50%;
+}
