@@ -3,10 +3,11 @@ package bellevue.domain
 type Msg = ControlMsg | MouseMsg | ToolboxMsg
 
 enum ControlMsg:
-  case Partial(parsedMsg: Either[String, Msg])
   case HtmlElementLoaded(id: String)
-  case ResizeCanvas
+  case MapToCanvas(point: Point, buildMsg: Point => MouseMsg)
   case NoAction
+  case Partial(parsedMsg: Either[String, Msg])
+  case ResizeCanvas
 
 enum MouseMsg:
   case MouseDown(point: Point)

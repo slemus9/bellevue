@@ -11,22 +11,22 @@ object Subscription:
 
   val mouseDown: Sub[IO, Msg] =
     Sub.fromEvent("mousedown", dom.document):
-      case event: dom.MouseEvent => Some(MouseMsg.MouseDown(Point(event.clientX, event.clientY)))
+      case event: dom.MouseEvent => Some(ControlMsg.MapToCanvas(mousePosition(event), MouseMsg.MouseDown.apply))
       case _                     => None
 
   val mouseMove: Sub[IO, Msg] =
     Sub.fromEvent("mousemove", dom.document):
-      case event: dom.MouseEvent => Some(MouseMsg.MouseMove(Point(event.clientX, event.clientY)))
+      case event: dom.MouseEvent => Some(ControlMsg.MapToCanvas(mousePosition(event), MouseMsg.MouseMove.apply))
       case _                     => None
 
   val mouseUp: Sub[IO, Msg] =
     Sub.fromEvent("mouseup", dom.document):
-      case event: dom.MouseEvent => Some(MouseMsg.MouseUp(Point(event.clientX, event.clientY)))
+      case event: dom.MouseEvent => Some(ControlMsg.MapToCanvas(mousePosition(event), MouseMsg.MouseUp.apply))
       case _                     => None
 
   val resize: Sub[IO, Msg] =
-    Sub.fromEvent("resize", dom.window):
-      case _ => Some(ControlMsg.ResizeCanvas)
+    Sub.fromEvent("resize", dom.window): _ =>
+      Some(ControlMsg.ResizeCanvas)
 
   def waitForElement(elementId: String): Sub[IO, Msg] =
 
@@ -46,6 +46,11 @@ object Subscription:
         observer
     } { observer =>
       IO(observer.disconnect())
-    } { _ => Some(ControlMsg.HtmlElementLoaded(elementId)) }
+    } { _ =>
+      Some(ControlMsg.HtmlElementLoaded(elementId))
+    }
+
+  private def mousePosition(event: dom.MouseEvent): Point =
+    Point(event.clientX, event.clientY)
 
 end Subscription

@@ -17,6 +17,6 @@ object DrawingCanvas:
 
     def relativePosition(p: Point) =
       Point(
-        math.floor(p.x - canvas.getBoundingClientRect().left),
-        math.floor(p.y - canvas.getBoundingClientRect().top)
+        x = math.floor(p.x - canvas.getBoundingClientRect().left),
+        y = math.floor(p.y - canvas.getBoundingClientRect().top)
       )
