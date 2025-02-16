@@ -11,24 +11,24 @@ import monocle.syntax.all.*
 final case class DrawingModel(
     selectedTool: Tool,
     lineConfig: LineConfig,
-    mouseDownInterval: Option[MouseDownInterval]
+    mouseDragging: Option[MouseDragging]
 ):
 
   def clickMouse(startPosition: Point) =
-    copy(mouseDownInterval = Some(MouseDownInterval.init(startPosition)))
+    copy(mouseDragging = Some(MouseDragging.init(startPosition)))
 
   def moveMouse(to: Point) =
-    this.focus(_.mouseDownInterval.some.latestPosition).replace(to)
+    this.focus(_.mouseDragging.some.latestPosition).replace(to)
 
   def releaseMouse =
-    copy(mouseDownInterval = None)
+    copy(mouseDragging = None)
 
 object DrawingModel:
 
   val init = DrawingModel(
     selectedTool = Tool.Brush,
     lineConfig = LineConfig.init,
-    mouseDownInterval = None
+    mouseDragging = None
   )
 
 /**
@@ -39,12 +39,12 @@ object DrawingModel:
   * @param latestPosition
   *   the latest recorded position of the mouse (without releasing it)
   */
-final case class MouseDownInterval(
+final case class MouseDragging(
     startPosition: Point,
     latestPosition: Point
 )
 
-object MouseDownInterval:
+object MouseDragging:
 
   def init(startPosition: Point) =
-    MouseDownInterval(startPosition, latestPosition = startPosition)
+    MouseDragging(startPosition, latestPosition = startPosition)
