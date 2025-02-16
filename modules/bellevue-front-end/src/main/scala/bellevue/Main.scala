@@ -2,6 +2,7 @@ package bellevue
 
 import bellevue.commands.Command
 import bellevue.domain.*
+import bellevue.domain.tools.Tool
 import bellevue.html.BellevueHtml
 import bellevue.logic.*
 import bellevue.subscriptions.Subscription
@@ -22,7 +23,7 @@ object Main extends TyrianIOApp[Msg, DrawingModel]:
   override def update(model: DrawingModel): Msg => (DrawingModel, Cmd[IO, Msg]) =
 
     case ControlMsg.Partial(Left(error)) =>
-      (model, Logger.error[IO](error))
+      (model, Logger.error[IO](error.getMessage))
 
     case ControlMsg.Partial(Right(msg)) =>
       update(model)(msg)

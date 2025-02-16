@@ -1,6 +1,6 @@
 package bellevue.commands
 
-import bellevue.domain.Point
+import bellevue.domain.geometry.Point
 import cats.effect.IO
 import org.scalajs.dom
 import tyrian.Cmd

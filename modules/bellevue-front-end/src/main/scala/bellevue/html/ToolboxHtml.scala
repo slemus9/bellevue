@@ -1,6 +1,8 @@
 package bellevue.html
 
 import bellevue.domain.*
+import bellevue.domain.geometry.Pixels
+import bellevue.domain.tools.*
 import cats.syntax.show.*
 import tyrian.Html
 import tyrian.Html.*
@@ -20,12 +22,15 @@ final class ToolboxHtml(model: DrawingModel):
     )
 
   private lazy val viewBrushColorInput: List[Html[Msg]] =
+    def buildMessage(str: String) =
+      ControlMsg.Partial(Color.parse(str).map(ToolboxMsg.PickColor.apply))
+
     List(
       span("Brush Color: "),
       input(
         `type` := "color",
-        value  := model.brushConfig.color,
-        onChange(ToolboxMsg.PickColor.apply)
+        value  := model.lineConfig.color,
+        onChange(buildMessage)
       )
     )
 
@@ -37,11 +42,11 @@ final class ToolboxHtml(model: DrawingModel):
       span("Brush Size: "),
       input(
         list  := "brush-size-options",
-        value := model.brushConfig.lineWidth.show,
+        value := model.lineConfig.lineWidth.show,
         onChange(buildMessage)
       ),
       datalist(id := "brush-size-options")(
-        BrushConfig.lineWidths.map(size => option(size.show))
+        LineConfig.LineWidths.map(size => option(size.show))
       )
     )
 

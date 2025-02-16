@@ -2,29 +2,32 @@ package bellevue.logic
 
 import bellevue.commands.Command
 import bellevue.domain.*
+import bellevue.domain.geometry.Rectangle
 import cats.effect.IO
 import tyrian.Cmd
 
 object RectangleAction:
 
   def draw(model: DrawingModel, msg: MouseMsg): (DrawingModel, Cmd[IO, Msg]) =
-    (msg, model.mouseDownInterval) match
+    (msg, model.mouseDragging) match
       case (MouseMsg.MouseDown(from), None) =>
         (
           model.clickMouse(from),
-          Command.setLineStyle(model.brushConfig) |+| Command.showOverlaidRectange
+          Command.setLineStyle(model.lineConfig) |+| Command.showOverlaidRectange
         )
 
-      case (MouseMsg.MouseMove(to), Some(interval)) =>
+      case (MouseMsg.MouseMove(to), Some(dragging)) =>
+        val rectangle = Rectangle(from = dragging.startPosition, to)
         (
           model.moveMouse(to),
-          Command.drawOverlaidRectangle(from = interval.startPosition, to)
+          Command.drawOverlaidRectangle(rectangle)
         )
 
-      case (MouseMsg.MouseUp(to), Some(interval)) =>
+      case (MouseMsg.MouseUp(to), Some(dragging)) =>
+        val rectangle = Rectangle(from = dragging.startPosition, to)
         (
           model.releaseMouse,
-          Command.drawRectangle(from = interval.startPosition, to) |+| Command.hideOverlaidRectangle
+          Command.drawRectangle(rectangle) |+| Command.hideOverlaidRectangle
         )
 
       case _ => (model, Cmd.None)

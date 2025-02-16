@@ -1,62 +1,47 @@
 package bellevue.commands
 
-import bellevue.domain.Point
+import bellevue.domain.geometry.Pixels.px
+import bellevue.domain.geometry.Rectangle
 import bellevue.html.BellevueHtml
 import cats.effect.IO
+import cats.syntax.show.*
 import org.scalajs.dom
 import tyrian.Cmd
 
 trait RectangleCommand:
 
-  def drawRectangle(from: Point, to: Point): Cmd[IO, Nothing] =
+  def drawRectangle(rectangle: Rectangle): Cmd[IO, Nothing] =
     Cmd.SideEffect:
-      val (topLeft, bottomRight) = rectangleCorners(from, to)
       DrawingCanvas.get.context2d.strokeRect(
-        x = topLeft.x,
-        y = topLeft.y,
-        w = bottomRight.x - topLeft.x,
-        h = bottomRight.y - topLeft.y
+        x = rectangle.topLeft.x,
+        y = rectangle.topLeft.y,
+        w = rectangle.width,
+        h = rectangle.height
       )
 
   val showOverlaidRectange: Cmd[IO, Nothing] =
     Cmd.SideEffect:
       val rectangle = getOverlaidRectangle
       rectangle.style.visibility = "visible"
-      rectangle.style.borderWidth = "1px"
+      rectangle.style.borderWidth = 1.px.show
 
-  def drawOverlaidRectangle(from: Point, to: Point): Cmd[IO, Nothing] =
+  def drawOverlaidRectangle(rectangle: Rectangle): Cmd[IO, Nothing] =
     Cmd.SideEffect:
-      val (topLeft, bottomRight) = rectangleCorners(from, to)
-      val rectangle              = getOverlaidRectangle
-      rectangle.style.left = s"${topLeft.x}px"
-      rectangle.style.top = s"${topLeft.y}px"
-      rectangle.style.width = s"${bottomRight.x - topLeft.x}px"
-      rectangle.style.height = s"${bottomRight.y - topLeft.y}px"
+      val rectangleElem = getOverlaidRectangle
+      rectangleElem.style.left = rectangle.topLeft.x.show
+      rectangleElem.style.top = rectangle.topLeft.y.show
+      rectangleElem.style.width = rectangle.width.show
+      rectangleElem.style.height = rectangle.height.show
 
   val hideOverlaidRectangle: Cmd[IO, Nothing] =
     Cmd.SideEffect:
       val rectangle = getOverlaidRectangle
       rectangle.style.visibility = "hidden"
-      rectangle.style.borderWidth = "0px"
-      rectangle.style.width = "0px"
-      rectangle.style.height = "0px"
+      rectangle.style.borderWidth = 0.px.show
+      rectangle.style.width = 0.px.show
+      rectangle.style.height = 0.px.show
 
   private def getOverlaidRectangle: dom.HTMLElement =
     dom.document.getElementById(BellevueHtml.OverlaidRectangleId).asInstanceOf[dom.HTMLElement]
-
-  /**
-    * @param from
-    *   an edge of the rectangle
-    * @param to
-    *   an edge of the rectangle
-    * @return
-    *   A tuple containing the top left and bottom right edges (respectively) of the rectangle that is formed by
-    *   [[from]] and [[to]]
-    */
-  def rectangleCorners(from: Point, to: Point): (Point, Point) = (from, to) match
-    case (Point(x1, y1), Point(x2, y2)) if y1 < y2 && x1 < x2 => (from, to)
-    case (Point(x1, y1), Point(x2, y2)) if y1 < y2            => (Point(x2, y1), Point(x1, y2))
-    case (Point(x1, y1), Point(x2, y2)) if x1 < x2            => (Point(x1, y2), Point(x2, y1))
-    case (Point(x1, y1), Point(x2, y2))                       => (to, from)
 
 end RectangleCommand

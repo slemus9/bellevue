@@ -1,12 +1,15 @@
 package bellevue.domain
 
+import bellevue.domain.geometry.{Pixels, Point}
+import bellevue.domain.tools.{Color, Tool}
+
 type Msg = ControlMsg | MouseMsg | ToolboxMsg
 
 enum ControlMsg:
   case HtmlElementLoaded(id: String)
   case MapToCanvas(point: Point, buildMsg: Point => MouseMsg)
   case NoAction
-  case Partial(parsedMsg: Either[String, Msg])
+  case Partial(msgOrError: Either[AppError, Msg])
   case ResizeCanvas
 
 enum MouseMsg:
@@ -16,5 +19,5 @@ enum MouseMsg:
 
 enum ToolboxMsg:
   case PickBrushSize(size: Pixels)
-  case PickColor(color: String)
+  case PickColor(color: Color)
   case PickTool(tool: Tool)
