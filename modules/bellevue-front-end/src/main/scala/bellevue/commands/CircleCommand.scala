@@ -1,12 +1,12 @@
 package bellevue.commands
 
 import bellevue.domain.geometry.Circle
+import bellevue.domain.geometry.Pixels.px
 import bellevue.html.BellevueHtml
 import cats.effect.IO
+import cats.syntax.show.*
 import org.scalajs.dom
 import tyrian.Cmd
-
-import scala.math
 
 trait CircleCommand:
 
@@ -27,23 +27,23 @@ trait CircleCommand:
     Cmd.SideEffect:
       val circle = getOverlaidCircle
       circle.style.visibility = "visible"
-      circle.style.borderWidth = "1px"
+      circle.style.borderWidth = 1.px.show
 
   def drawOverlaidCircle(circle: Circle): Cmd[IO, Nothing] =
     Cmd.SideEffect:
       val circleDiv = getOverlaidCircle
-      circleDiv.style.left = s"${circle.center.x - circle.radius}px"
-      circleDiv.style.top = s"${circle.center.y - circle.radius}px"
-      circleDiv.style.width = s"${circle.diameter}px"
-      circleDiv.style.height = s"${circle.diameter}px"
+      circleDiv.style.left = (circle.center.x - circle.radius).px.show
+      circleDiv.style.top = (circle.center.y - circle.radius).px.show
+      circleDiv.style.width = circle.diameter.show
+      circleDiv.style.height = circle.diameter.show
 
   val hideOverlaidCircle: Cmd[IO, Nothing] =
     Cmd.SideEffect:
       val circleDiv = getOverlaidCircle
       circleDiv.style.visibility = "hidden"
-      circleDiv.style.borderWidth = "0px"
-      circleDiv.style.width = "0px"
-      circleDiv.style.height = "0px"
+      circleDiv.style.borderWidth = 0.px.show
+      circleDiv.style.width = 0.px.show
+      circleDiv.style.height = 0.px.show
 
   private def getOverlaidCircle: dom.HTMLElement =
     dom.document.getElementById(BellevueHtml.OverlaidCircleId).asInstanceOf[dom.HTMLElement]

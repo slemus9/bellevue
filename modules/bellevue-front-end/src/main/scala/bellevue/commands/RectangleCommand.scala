@@ -1,8 +1,10 @@
 package bellevue.commands
 
+import bellevue.domain.geometry.Pixels.px
 import bellevue.domain.geometry.Rectangle
 import bellevue.html.BellevueHtml
 import cats.effect.IO
+import cats.syntax.show.*
 import org.scalajs.dom
 import tyrian.Cmd
 
@@ -21,23 +23,23 @@ trait RectangleCommand:
     Cmd.SideEffect:
       val rectangle = getOverlaidRectangle
       rectangle.style.visibility = "visible"
-      rectangle.style.borderWidth = "1px"
+      rectangle.style.borderWidth = 1.px.show
 
   def drawOverlaidRectangle(rectangle: Rectangle): Cmd[IO, Nothing] =
     Cmd.SideEffect:
       val rectangleElem = getOverlaidRectangle
-      rectangleElem.style.left = s"${rectangle.topLeft.x}px"
-      rectangleElem.style.top = s"${rectangle.topLeft.y}px"
-      rectangleElem.style.width = s"${rectangle.width}px"
-      rectangleElem.style.height = s"${rectangle.height}px"
+      rectangleElem.style.left = rectangle.topLeft.x.show
+      rectangleElem.style.top = rectangle.topLeft.y.show
+      rectangleElem.style.width = rectangle.width.show
+      rectangleElem.style.height = rectangle.height.show
 
   val hideOverlaidRectangle: Cmd[IO, Nothing] =
     Cmd.SideEffect:
       val rectangle = getOverlaidRectangle
       rectangle.style.visibility = "hidden"
-      rectangle.style.borderWidth = "0px"
-      rectangle.style.width = "0px"
-      rectangle.style.height = "0px"
+      rectangle.style.borderWidth = 0.px.show
+      rectangle.style.width = 0.px.show
+      rectangle.style.height = 0.px.show
 
   private def getOverlaidRectangle: dom.HTMLElement =
     dom.document.getElementById(BellevueHtml.OverlaidRectangleId).asInstanceOf[dom.HTMLElement]

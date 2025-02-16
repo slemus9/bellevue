@@ -19,4 +19,4 @@ object BrushConfig:
   )
 
   val lineWidths: List[Pixels] =
-    List[Int :| Positive0](1, 2, 3, 5, 8, 12, 25, 35, 50, 75, 100).map(Pixels.apply)
+    List[Double](1, 2, 3, 5, 8, 12, 25, 35, 50, 75, 100).map(Pixels.apply)

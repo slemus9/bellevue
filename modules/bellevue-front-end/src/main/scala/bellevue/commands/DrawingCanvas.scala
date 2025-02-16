@@ -1,5 +1,6 @@
 package bellevue.commands
 
+import bellevue.domain.geometry.Pixels.px
 import bellevue.domain.geometry.Point
 import bellevue.html.BellevueHtml
 import org.scalajs.dom.{document, CanvasRenderingContext2D}
@@ -17,6 +18,6 @@ object DrawingCanvas:
 
     def relativePosition(p: Point) =
       Point(
-        x = math.floor(p.x - canvas.getBoundingClientRect().left),
-        y = math.floor(p.y - canvas.getBoundingClientRect().top)
+        x = math.floor(p.x - canvas.getBoundingClientRect().left).px,
+        y = math.floor(p.y - canvas.getBoundingClientRect().top).px
       )

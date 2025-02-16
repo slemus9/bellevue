@@ -4,12 +4,12 @@ package bellevue.domain.geometry
   * @param topLeft
   *   the top left coordinate of the rectangle
   * @param bottomRight
-  *   the bottom right corrdinate of the rectangle
+  *   the bottom right coordinate of the rectangle
   */
 final case class Rectangle(topLeft: Point, bottomRight: Point):
 
-  def width  = bottomRight.x - topLeft.x
-  def height = bottomRight.y - topLeft.y
+  def width: Pixels  = bottomRight.x - topLeft.x
+  def height: Pixels = bottomRight.y - topLeft.y
 
 object Rectangle:
 

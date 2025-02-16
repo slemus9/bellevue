@@ -1,8 +1,8 @@
 package bellevue.domain.geometry
 
-final case class Circle(center: Point, radius: Double):
+final case class Circle(center: Point, radius: Pixels):
 
-  def diameter = 2 * radius
+  def diameter: Pixels = 2 * radius
 
 object Circle:
 
