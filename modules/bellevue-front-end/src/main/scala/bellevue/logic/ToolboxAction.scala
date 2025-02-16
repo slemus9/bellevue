@@ -1,6 +1,7 @@
 package bellevue.logic
 
 import bellevue.domain.*
+import bellevue.domain.geometry.Pixels
 import monocle.syntax.all.*
 
 object ToolboxAction:

@@ -1,5 +1,6 @@
 package bellevue.domain
 
+import bellevue.domain.geometry.Pixels
 import io.github.iltotore.iron.*
 import io.github.iltotore.iron.constraint.numeric.Positive0
 

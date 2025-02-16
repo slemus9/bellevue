@@ -1,6 +1,7 @@
 package bellevue.subscriptions
 
 import bellevue.domain.*
+import bellevue.domain.geometry.Point
 import cats.effect.IO
 import org.scalajs.dom
 import tyrian.Sub

@@ -1,5 +1,6 @@
 package bellevue.domain
 
+import bellevue.domain.geometry.Point
 import monocle.syntax.all.*
 
 /**

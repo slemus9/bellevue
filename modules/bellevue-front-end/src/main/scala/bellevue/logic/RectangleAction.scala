@@ -2,6 +2,7 @@ package bellevue.logic
 
 import bellevue.commands.Command
 import bellevue.domain.*
+import bellevue.domain.geometry.Rectangle
 import cats.effect.IO
 import tyrian.Cmd
 
@@ -16,15 +17,17 @@ object RectangleAction:
         )
 
       case (MouseMsg.MouseMove(to), Some(interval)) =>
+        val rectangle = Rectangle(from = interval.startPosition, to)
         (
           model.moveMouse(to),
-          Command.drawOverlaidRectangle(from = interval.startPosition, to)
+          Command.drawOverlaidRectangle(rectangle)
         )
 
       case (MouseMsg.MouseUp(to), Some(interval)) =>
+        val rectangle = Rectangle(from = interval.startPosition, to)
         (
           model.releaseMouse,
-          Command.drawRectangle(from = interval.startPosition, to) |+| Command.hideOverlaidRectangle
+          Command.drawRectangle(rectangle) |+| Command.hideOverlaidRectangle
         )
 
       case _ => (model, Cmd.None)

@@ -1,4 +1,4 @@
-package bellevue.domain
+package bellevue.domain.geometry
 
 import cats.Show
 import io.github.iltotore.iron.*

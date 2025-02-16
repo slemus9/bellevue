@@ -1,6 +1,4 @@
-package bellevue.domain
-
-import scala.math
+package bellevue.domain.geometry
 
 final case class Point(x: Double, y: Double):
 

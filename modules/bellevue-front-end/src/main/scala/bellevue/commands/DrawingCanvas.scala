@@ -1,6 +1,6 @@
 package bellevue.commands
 
-import bellevue.domain.Point
+import bellevue.domain.geometry.Point
 import bellevue.html.BellevueHtml
 import org.scalajs.dom.{document, CanvasRenderingContext2D}
 import org.scalajs.dom.html.Canvas

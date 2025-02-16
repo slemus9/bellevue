@@ -1,6 +1,6 @@
 package bellevue.commands
 
-import bellevue.domain.Point
+import bellevue.domain.geometry.Circle
 import bellevue.html.BellevueHtml
 import cats.effect.IO
 import org.scalajs.dom
@@ -10,14 +10,14 @@ import scala.math
 
 trait CircleCommand:
 
-  def drawCircle(center: Point, radius: Double): Cmd[IO, Nothing] =
+  def drawCircle(circle: Circle): Cmd[IO, Nothing] =
     Cmd.SideEffect:
       val context = DrawingCanvas.get.context2d
       context.beginPath()
       context.arc(
-        x = center.x,
-        y = center.y,
-        radius,
+        x = circle.center.x,
+        y = circle.center.y,
+        circle.radius,
         startAngle = 0,
         endAngle = 2 * math.Pi
       )
@@ -29,21 +29,21 @@ trait CircleCommand:
       circle.style.visibility = "visible"
       circle.style.borderWidth = "1px"
 
-  def drawOverlaidCircle(center: Point, radius: Double): Cmd[IO, Nothing] =
+  def drawOverlaidCircle(circle: Circle): Cmd[IO, Nothing] =
     Cmd.SideEffect:
-      val circle = getOverlaidCircle
-      circle.style.left = s"${center.x - radius}px"
-      circle.style.top = s"${center.y - radius}px"
-      circle.style.width = s"${2 * radius}px"
-      circle.style.height = s"${2 * radius}px"
+      val circleDiv = getOverlaidCircle
+      circleDiv.style.left = s"${circle.center.x - circle.radius}px"
+      circleDiv.style.top = s"${circle.center.y - circle.radius}px"
+      circleDiv.style.width = s"${circle.diameter}px"
+      circleDiv.style.height = s"${circle.diameter}px"
 
   val hideOverlaidCircle: Cmd[IO, Nothing] =
     Cmd.SideEffect:
-      val circle = getOverlaidCircle
-      circle.style.visibility = "hidden"
-      circle.style.borderWidth = "0px"
-      circle.style.width = "0px"
-      circle.style.height = "0px"
+      val circleDiv = getOverlaidCircle
+      circleDiv.style.visibility = "hidden"
+      circleDiv.style.borderWidth = "0px"
+      circleDiv.style.width = "0px"
+      circleDiv.style.height = "0px"
 
   private def getOverlaidCircle: dom.HTMLElement =
     dom.document.getElementById(BellevueHtml.OverlaidCircleId).asInstanceOf[dom.HTMLElement]

@@ -2,6 +2,7 @@ package bellevue.logic
 
 import bellevue.commands.Command
 import bellevue.domain.*
+import bellevue.domain.geometry.Circle
 import cats.effect.IO
 import tyrian.Cmd
 
@@ -16,17 +17,17 @@ object CircleAction:
         )
 
       case (MouseMsg.MouseMove(to), Some(interval)) =>
-        val center = interval.startPosition
+        val circle = Circle(center = interval.startPosition, to)
         (
           model.moveMouse(to),
-          Command.drawOverlaidCircle(center, center.distanceTo(to))
+          Command.drawOverlaidCircle(circle)
         )
 
       case (MouseMsg.MouseUp(to), Some(interval)) =>
-        val center = interval.startPosition
+        val circle = Circle(center = interval.startPosition, to)
         (
           model.releaseMouse,
-          Command.drawCircle(center, center.distanceTo(to)) |+| Command.hideOverlaidCircle
+          Command.drawCircle(circle) |+| Command.hideOverlaidCircle
         )
 
       case _ => (model, Cmd.None)

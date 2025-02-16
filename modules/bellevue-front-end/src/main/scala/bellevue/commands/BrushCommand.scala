@@ -1,6 +1,7 @@
 package bellevue.commands
 
-import bellevue.domain.*
+import bellevue.domain.geometry.Point
+import bellevue.domain.BrushConfig
 import cats.effect.IO
 import tyrian.Cmd
 

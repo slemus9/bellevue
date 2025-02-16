@@ -1,5 +1,7 @@
 package bellevue.domain
 
+import bellevue.domain.geometry.{Pixels, Point}
+
 type Msg = ControlMsg | MouseMsg | ToolboxMsg
 
 enum ControlMsg:
