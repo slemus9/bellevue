@@ -13,7 +13,7 @@ object RectangleAction:
       case (MouseMsg.MouseDown(from), None) =>
         (
           model.clickMouse(from),
-          Command.setLineStyle(model.brushConfig) |+| Command.showOverlaidRectange
+          Command.setLineStyle(model.lineConfig) |+| Command.showOverlaidRectange
         )
 
       case (MouseMsg.MouseMove(to), Some(interval)) =>

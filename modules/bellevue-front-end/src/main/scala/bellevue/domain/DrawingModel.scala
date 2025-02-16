@@ -1,6 +1,8 @@
 package bellevue.domain
 
 import bellevue.domain.geometry.Point
+import bellevue.domain.tools.LineConfig
+import bellevue.domain.tools.Tool
 import monocle.syntax.all.*
 
 /**
@@ -8,7 +10,7 @@ import monocle.syntax.all.*
   */
 final case class DrawingModel(
     selectedTool: Tool,
-    brushConfig: BrushConfig,
+    lineConfig: LineConfig,
     mouseDownInterval: Option[MouseDownInterval]
 ):
 
@@ -25,7 +27,7 @@ object DrawingModel:
 
   val init = DrawingModel(
     selectedTool = Tool.Brush,
-    brushConfig = BrushConfig.init,
+    lineConfig = LineConfig.init,
     mouseDownInterval = None
   )
 
@@ -46,6 +48,3 @@ object MouseDownInterval:
 
   def init(startPosition: Point) =
     MouseDownInterval(startPosition, latestPosition = startPosition)
-
-enum Tool:
-  case Brush, Circle, Eraser, Rectangle

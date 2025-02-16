@@ -1,6 +1,7 @@
 package bellevue.domain
 
 import bellevue.domain.geometry.{Pixels, Point}
+import bellevue.domain.tools.{Color, Tool}
 
 type Msg = ControlMsg | MouseMsg | ToolboxMsg
 
@@ -18,5 +19,5 @@ enum MouseMsg:
 
 enum ToolboxMsg:
   case PickBrushSize(size: Pixels)
-  case PickColor(color: String)
+  case PickColor(color: Color)
   case PickTool(tool: Tool)

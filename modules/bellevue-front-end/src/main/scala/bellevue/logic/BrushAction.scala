@@ -12,7 +12,7 @@ object BrushAction:
       case (MouseMsg.MouseDown(from), None) =>
         (
           model.clickMouse(from),
-          Command.setLineStyle(model.brushConfig)
+          Command.setLineStyle(model.lineConfig)
         )
 
       case (MouseMsg.MouseMove(to), Some(interval)) =>

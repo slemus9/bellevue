@@ -2,6 +2,7 @@ package bellevue
 
 import bellevue.commands.Command
 import bellevue.domain.*
+import bellevue.domain.tools.Tool
 import bellevue.html.BellevueHtml
 import bellevue.logic.*
 import bellevue.subscriptions.Subscription

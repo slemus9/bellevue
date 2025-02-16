@@ -1,13 +1,13 @@
 package bellevue.commands
 
 import bellevue.domain.geometry.Point
-import bellevue.domain.BrushConfig
+import bellevue.domain.tools.LineConfig
 import cats.effect.IO
 import tyrian.Cmd
 
 trait BrushCommand:
 
-  def setLineStyle(config: BrushConfig): Cmd[IO, Nothing] =
+  def setLineStyle(config: LineConfig): Cmd[IO, Nothing] =
     Cmd.SideEffect:
       val context = DrawingCanvas.get.context2d
       context.lineCap = "round"

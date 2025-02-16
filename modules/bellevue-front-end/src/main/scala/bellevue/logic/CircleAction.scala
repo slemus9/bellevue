@@ -13,7 +13,7 @@ object CircleAction:
       case (MouseMsg.MouseDown(center), None) =>
         (
           model.clickMouse(center),
-          Command.setLineStyle(model.brushConfig) |+| Command.showOverlaidCircle
+          Command.setLineStyle(model.lineConfig) |+| Command.showOverlaidCircle
         )
 
       case (MouseMsg.MouseMove(to), Some(interval)) =>
