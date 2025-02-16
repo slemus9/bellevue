@@ -9,7 +9,7 @@ enum ControlMsg:
   case HtmlElementLoaded(id: String)
   case MapToCanvas(point: Point, buildMsg: Point => MouseMsg)
   case NoAction
-  case Partial(parsedMsg: Either[String, Msg])
+  case Partial(msgOrError: Either[AppError, Msg])
   case ResizeCanvas
 
 enum MouseMsg:
