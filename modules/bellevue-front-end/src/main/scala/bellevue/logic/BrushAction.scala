@@ -1,6 +1,6 @@
 package bellevue.logic
 
-import bellevue.commands.Command
+import bellevue.commands.*
 import bellevue.domain.*
 import cats.effect.IO
 import tyrian.Cmd
@@ -12,19 +12,19 @@ object BrushAction:
       case (MouseMsg.MouseDown(from), None) =>
         (
           model.clickMouse(from),
-          Command.setLineStyle(model.lineConfig)
+          Get.canvas.run(_.setLineStyle(model.lineConfig))
         )
 
       case (MouseMsg.MouseMove(to), Some(dragging)) =>
         (
           model.moveMouse(to),
-          Command.drawLineSegment(from = dragging.latestPosition, to)
+          Get.canvas.run(_.drawLineSegment(from = dragging.latestPosition, to))
         )
 
       case (MouseMsg.MouseUp(to), Some(dragging)) =>
         (
           model.releaseMouse,
-          Command.drawLineSegment(from = dragging.latestPosition, to)
+          Get.canvas.run(_.drawLineSegment(from = dragging.latestPosition, to))
         )
 
       case _ => (model, Cmd.None)
