@@ -5,6 +5,10 @@ import cats.effect.IO
 import cats.syntax.show.*
 import org.scalajs.dom.HTMLElement
 
+/**
+  * Represents a shape that can be overlaid on top of other HTML elements. This can be useful, for example, when we want
+  * to display a rectangle when performing a selection over a drawing in the canvas
+  */
 trait OverlaidShape(element: HTMLElement):
 
   val show: IO[Unit] = IO:

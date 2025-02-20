@@ -9,16 +9,26 @@ import org.scalajs.dom.html.Canvas
 import org.scalajs.dom.CanvasRenderingContext2D
 import org.scalajs.dom.Element
 
+/**
+  * Represents an HTML canvas that we can use to draw 2D shapes
+  */
 final class Canvas2d private (
     canvas: Canvas,
     context: CanvasRenderingContext2D
 ):
 
-  def relativePositionOf(p: Point) = Point(
-    x = math.floor(p.x - canvas.getBoundingClientRect().left).px,
-    y = math.floor(p.y - canvas.getBoundingClientRect().top).px
+  /**
+    * Finds the relative position of a given [[point]] in the window with respect to the canvas dimensions
+    */
+  def relativePositionOf(point: Point) = Point(
+    x = math.floor(point.x - canvas.getBoundingClientRect().left).px,
+    y = math.floor(point.y - canvas.getBoundingClientRect().top).px
   )
 
+  /**
+    * Resize the canvas with respect to its parent. Useful for reorganizing the canvas content when the browser's window
+    * is resized
+    */
   val resize: IO[Unit] =
     canvas.parentNode.as[Element].liftTo[IO].flatMap { parentNode =>
       IO:
