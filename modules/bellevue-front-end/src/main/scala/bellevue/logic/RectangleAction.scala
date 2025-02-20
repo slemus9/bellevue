@@ -1,6 +1,6 @@
 package bellevue.logic
 
-import bellevue.commands.Command
+import bellevue.commands.*
 import bellevue.domain.*
 import bellevue.domain.geometry.Rectangle
 import cats.effect.IO
@@ -13,21 +13,21 @@ object RectangleAction:
       case (MouseMsg.MouseDown(from), None) =>
         (
           model.clickMouse(from),
-          Command.setLineStyle(model.lineConfig) |+| Command.showOverlaidRectange
+          Get.canvas.run(_.setLineStyle(model.lineConfig)) |+| Get.overlaidRectangle.run(_.show)
         )
 
       case (MouseMsg.MouseMove(to), Some(dragging)) =>
         val rectangle = Rectangle(from = dragging.startPosition, to)
         (
           model.moveMouse(to),
-          Command.drawOverlaidRectangle(rectangle)
+          Get.overlaidRectangle.run(_.draw(rectangle))
         )
 
       case (MouseMsg.MouseUp(to), Some(dragging)) =>
         val rectangle = Rectangle(from = dragging.startPosition, to)
         (
           model.releaseMouse,
-          Command.drawRectangle(rectangle) |+| Command.hideOverlaidRectangle
+          Get.canvas.run(_.drawRectangle(rectangle)) |+| Get.overlaidRectangle.run(_.hide)
         )
 
       case _ => (model, Cmd.None)

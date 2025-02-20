@@ -1,6 +1,6 @@
 package bellevue.logic
 
-import bellevue.commands.Command
+import bellevue.commands.*
 import bellevue.domain.*
 import bellevue.domain.geometry.Circle
 import cats.effect.IO
@@ -13,21 +13,21 @@ object CircleAction:
       case (MouseMsg.MouseDown(center), None) =>
         (
           model.clickMouse(center),
-          Command.setLineStyle(model.lineConfig) |+| Command.showOverlaidCircle
+          Get.canvas.run(_.setLineStyle(model.lineConfig)) |+| Get.overlaidCircle.run(_.show)
         )
 
       case (MouseMsg.MouseMove(to), Some(dragging)) =>
         val circle = Circle(center = dragging.startPosition, to)
         (
           model.moveMouse(to),
-          Command.drawOverlaidCircle(circle)
+          Get.overlaidCircle.run(_.draw(circle))
         )
 
       case (MouseMsg.MouseUp(to), Some(dragging)) =>
         val circle = Circle(center = dragging.startPosition, to)
         (
           model.releaseMouse,
-          Command.drawCircle(circle) |+| Command.hideOverlaidCircle
+          Get.canvas.run(_.drawCircle(circle)) |+| Get.overlaidCircle.run(_.hide)
         )
 
       case _ => (model, Cmd.None)
