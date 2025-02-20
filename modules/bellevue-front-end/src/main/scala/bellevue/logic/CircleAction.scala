@@ -1,33 +1,32 @@
 package bellevue.logic
 
-import bellevue.commands.Command
 import bellevue.domain.*
 import bellevue.domain.geometry.Circle
 import cats.effect.IO
 import tyrian.Cmd
 
-object CircleAction:
+object CircleAction extends DrawingContext:
 
   def draw(model: DrawingModel, msg: MouseMsg): (DrawingModel, Cmd[IO, Msg]) =
     (msg, model.mouseDragging) match
       case (MouseMsg.MouseDown(center), None) =>
         (
           model.clickMouse(center),
-          Command.setLineStyle(model.lineConfig) |+| Command.showOverlaidCircle
+          canvas.run(_.setLineStyle(model.lineConfig)) |+| overlaidCircle.run(_.show)
         )
 
       case (MouseMsg.MouseMove(to), Some(dragging)) =>
         val circle = Circle(center = dragging.startPosition, to)
         (
           model.moveMouse(to),
-          Command.drawOverlaidCircle(circle)
+          overlaidCircle.run(_.draw(circle))
         )
 
       case (MouseMsg.MouseUp(to), Some(dragging)) =>
         val circle = Circle(center = dragging.startPosition, to)
         (
           model.releaseMouse,
-          Command.drawCircle(circle) |+| Command.hideOverlaidCircle
+          canvas.run(_.drawCircle(circle)) |+| overlaidCircle.run(_.hide)
         )
 
       case _ => (model, Cmd.None)

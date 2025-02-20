@@ -7,7 +7,7 @@ type Msg = ControlMsg | MouseMsg | ToolboxMsg
 
 enum ControlMsg:
   case HtmlElementLoaded(id: String)
-  case MapToCanvas(point: Point, buildMsg: Point => MouseMsg)
+  case MapToCanvas(point: Point, toMouseMsg: Point => MouseMsg)
   case NoAction
   case Partial(msgOrError: Either[AppError, Msg])
   case ResizeCanvas

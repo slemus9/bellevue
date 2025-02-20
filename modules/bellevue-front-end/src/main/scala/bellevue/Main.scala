@@ -1,6 +1,5 @@
 package bellevue
 
-import bellevue.commands.Command
 import bellevue.domain.*
 import bellevue.domain.tools.Tool
 import bellevue.html.BellevueHtml
@@ -29,10 +28,10 @@ object Main extends TyrianIOApp[Msg, DrawingModel]:
       update(model)(msg)
 
     case ControlMsg.ResizeCanvas | ControlMsg.HtmlElementLoaded(BellevueHtml.CanvasId) =>
-      (model, Command.resizeCanvas)
+      (model, ControlAction.resizeCanvas)
 
-    case ControlMsg.MapToCanvas(point, buildMsg) =>
-      (model, Command.mapToCanvasPosition(point).map(buildMsg))
+    case msg: ControlMsg.MapToCanvas =>
+      (model, ControlAction.mapToCanvasPosition(msg))
 
     case msg: MouseMsg if model.selectedTool == Tool.Brush =>
       BrushAction.draw(model, msg)
