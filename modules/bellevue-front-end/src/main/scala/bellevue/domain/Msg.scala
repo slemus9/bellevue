@@ -3,13 +3,16 @@ package bellevue.domain
 import bellevue.domain.geometry.{Pixels, Point}
 import bellevue.domain.tools.{Color, Tool}
 
-type Msg = ControlMsg | MouseMsg | ToolboxMsg
+type Msg = ControlMsg | MouseMsg | Msg.Partial | ToolboxMsg
+
+object Msg:
+
+  final case class Partial(msgOrError: Either[AppError, Msg])
 
 enum ControlMsg:
   case HtmlElementLoaded(id: String)
   case MapToCanvas(point: Point, toMouseMsg: Point => MouseMsg)
   case NoAction
-  case Partial(msgOrError: Either[AppError, Msg])
   case ResizeCanvas
 
 enum MouseMsg:

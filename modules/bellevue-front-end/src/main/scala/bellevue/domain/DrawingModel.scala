@@ -15,6 +15,9 @@ final case class DrawingModel(
     receivedMessage: Msg
 ):
 
+  def withMessage(msg: Msg) =
+    copy(receivedMessage = msg)
+
   def clickMouse(startPosition: Point) =
     copy(mouseDragging = Some(MouseDragging.init(startPosition)))
 

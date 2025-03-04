@@ -1,14 +1,21 @@
 package bellevue.logic
 
 import bellevue.domain.*
+import bellevue.html.BellevueHtml
+import bellevue.logic.context.{Behavior, Variation}
 import cats.effect.IO
 import tyrian.Cmd
 
-object ControlAction extends DrawingContext:
+object ControlAction extends Variation.Monoidal[DrawingModel, Cmd[IO, Msg]], DrawingEnvironment:
 
-  val resizeCanvas: Cmd[IO, Nothing] =
-    canvas.run(_.resize)
+  override def isActive(state: DrawingModel): Boolean =
+    state.receivedMessage.isInstanceOf[ControlMsg]
 
-  def mapToCanvasPosition(msg: ControlMsg.MapToCanvas): Cmd[IO, Msg] =
-    canvas.command.map: canvas =>
-      msg.toMouseMsg(canvas.relativePositionOf(msg.point))
+  override val run: Behavior[DrawingModel, Cmd[IO, Msg]] = partialExecAndMerge: model =>
+    model.receivedMessage match
+      case ControlMsg.ResizeCanvas | ControlMsg.HtmlElementLoaded(BellevueHtml.CanvasId) =>
+        canvas.run(_.resize)
+
+      case ControlMsg.MapToCanvas(point, toMouseMsg) =>
+        canvas.command.map: canvas =>
+          toMouseMsg(canvas.relativePositionOf(point))

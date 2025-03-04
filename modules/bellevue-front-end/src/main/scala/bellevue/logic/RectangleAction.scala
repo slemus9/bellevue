@@ -2,31 +2,25 @@ package bellevue.logic
 
 import bellevue.domain.*
 import bellevue.domain.geometry.Rectangle
+import bellevue.domain.tools.Tool
+import bellevue.logic.context.{Behavior, Variation}
 import cats.effect.IO
 import tyrian.Cmd
 
-object RectangleAction extends DrawingContext:
+object RectangleAction extends Variation.Monoidal[DrawingModel, Cmd[IO, Msg]], DrawingEnvironment:
 
-  def draw(model: DrawingModel, msg: MouseMsg): (DrawingModel, Cmd[IO, Msg]) =
-    (msg, model.mouseDragging) match
+  override def isActive(state: DrawingModel): Boolean =
+    state.selectedTool == Tool.Rectangle && state.receivedMessage.isInstanceOf[MouseMsg]
+
+  override val run: Behavior[DrawingModel, Cmd[IO, Msg]] = partialExecAndMerge: model =>
+    (model.receivedMessage, model.mouseDragging) match
       case (MouseMsg.MouseDown(from), None) =>
-        (
-          model.clickMouse(from),
-          canvas.run(_.setLineStyle(model.lineConfig)) |+| overlaidRectangle.run(_.show)
-        )
+        canvas.run(_.setLineStyle(model.lineConfig)) |+| overlaidRectangle.run(_.show)
 
       case (MouseMsg.MouseMove(to), Some(dragging)) =>
         val rectangle = Rectangle(from = dragging.startPosition, to)
-        (
-          model.moveMouse(to),
-          overlaidRectangle.run(_.draw(rectangle))
-        )
+        overlaidRectangle.run(_.draw(rectangle))
 
       case (MouseMsg.MouseUp(to), Some(dragging)) =>
         val rectangle = Rectangle(from = dragging.startPosition, to)
-        (
-          model.releaseMouse,
-          canvas.run(_.drawRectangle(rectangle)) |+| overlaidRectangle.run(_.hide)
-        )
-
-      case _ => (model, Cmd.None)
+        canvas.run(_.drawRectangle(rectangle)) |+| overlaidRectangle.run(_.hide)

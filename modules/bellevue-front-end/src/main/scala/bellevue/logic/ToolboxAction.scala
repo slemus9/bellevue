@@ -1,20 +1,27 @@
 package bellevue.logic
 
 import bellevue.domain.*
-import bellevue.domain.geometry.Pixels
-import bellevue.domain.tools.{Color, Tool}
+import bellevue.domain.tools.*
+import bellevue.logic.context.{Behavior, Variation}
+import cats.effect.IO
 import monocle.syntax.all.*
+import tyrian.Cmd
 
-object ToolboxAction:
+object ToolboxAction extends Variation[DrawingModel, Cmd[IO, Msg]]:
 
-  def pickColor(model: DrawingModel, color: Color): DrawingModel =
-    model.focus(_.lineConfig.color).replace(color)
+  override def isActive(state: DrawingModel): Boolean =
+    state.receivedMessage.isInstanceOf[ToolboxMsg]
 
-  def pickBrushSize(model: DrawingModel, size: Pixels): DrawingModel =
-    model.focus(_.lineConfig.lineWidth).replace(size)
+  override val run: Behavior[DrawingModel, Cmd[IO, Msg]] = partialSetter: model =>
+    model.receivedMessage match
+      case ToolboxMsg.PickColor(color) =>
+        model.focus(_.lineConfig.color).replace(color)
 
-  def pickTool(model: DrawingModel, tool: Tool): DrawingModel = tool match
-    case Tool.Eraser =>
-      model.copy(selectedTool = Tool.Brush).focus(_.lineConfig.color).replace(Color.White)
-    case tool        =>
-      model.copy(selectedTool = tool)
+      case ToolboxMsg.PickBrushSize(size) =>
+        model.focus(_.lineConfig.lineWidth).replace(size)
+
+      case ToolboxMsg.PickTool(tool) if tool == Tool.Eraser =>
+        model.copy(selectedTool = Tool.Brush).focus(_.lineConfig.color).replace(Color.White)
+
+      case ToolboxMsg.PickTool(tool) =>
+        model.copy(selectedTool = tool)
