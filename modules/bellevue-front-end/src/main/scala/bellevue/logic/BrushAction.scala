@@ -1,29 +1,23 @@
 package bellevue.logic
 
 import bellevue.domain.*
+import bellevue.domain.tools.Tool
+import bellevue.logic.context.{Behavior, Variation}
 import cats.effect.IO
 import tyrian.Cmd
 
-object BrushAction extends DrawingContext:
+object BrushAction extends Variation.Monoidal[DrawingModel, Cmd[IO, Msg]], DrawingEnvironment:
 
-  def draw(model: DrawingModel, msg: MouseMsg): (DrawingModel, Cmd[IO, Msg]) =
-    (msg, model.mouseDragging) match
+  override def isActive(state: DrawingModel): Boolean =
+    state.selectedTool == Tool.Brush && state.receivedMessage.isInstanceOf[MouseMsg]
+
+  override val run: Behavior[DrawingModel, Cmd[IO, Msg]] = partialExecAndMerge: model =>
+    (model.receivedMessage, model.mouseDragging) match
       case (MouseMsg.MouseDown(from), None) =>
-        (
-          model.clickMouse(from),
-          canvas.run(_.setLineStyle(model.lineConfig))
-        )
+        canvas.run(_.setLineStyle(model.lineConfig))
 
       case (MouseMsg.MouseMove(to), Some(dragging)) =>
-        (
-          model.moveMouse(to),
-          canvas.run(_.drawLineSegment(from = dragging.latestPosition, to))
-        )
+        canvas.run(_.drawLineSegment(from = dragging.latestPosition, to))
 
       case (MouseMsg.MouseUp(to), Some(dragging)) =>
-        (
-          model.releaseMouse,
-          canvas.run(_.drawLineSegment(from = dragging.latestPosition, to))
-        )
-
-      case _ => (model, Cmd.None)
+        canvas.run(_.drawLineSegment(from = dragging.latestPosition, to))

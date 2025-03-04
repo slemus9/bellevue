@@ -1,9 +1,9 @@
 package bellevue
 
 import bellevue.domain.*
-import bellevue.domain.tools.Tool
 import bellevue.html.BellevueHtml
 import bellevue.logic.*
+import bellevue.logic.BellevueAction
 import bellevue.subscriptions.Subscription
 import cats.effect.IO
 import tyrian.*
@@ -20,38 +20,9 @@ object Main extends TyrianIOApp[Msg, DrawingModel]:
     (DrawingModel.init, Cmd.None)
 
   override def update(model: DrawingModel): Msg => (DrawingModel, Cmd[IO, Msg]) =
-
-    case ControlMsg.Partial(Left(error)) =>
-      (model, Logger.error[IO](error.getMessage))
-
-    case ControlMsg.Partial(Right(msg)) =>
-      update(model)(msg)
-
-    case ControlMsg.ResizeCanvas | ControlMsg.HtmlElementLoaded(BellevueHtml.CanvasId) =>
-      (model, ControlAction.resizeCanvas)
-
-    case msg: ControlMsg.MapToCanvas =>
-      (model, ControlAction.mapToCanvasPosition(msg))
-
-    case msg: MouseMsg if model.selectedTool == Tool.Brush =>
-      BrushAction.draw(model, msg)
-
-    case msg: MouseMsg if model.selectedTool == Tool.Circle =>
-      CircleAction.draw(model, msg)
-
-    case msg: MouseMsg if model.selectedTool == Tool.Rectangle =>
-      RectangleAction.draw(model, msg)
-
-    case ToolboxMsg.PickColor(color) =>
-      (ToolboxAction.pickColor(model, color), Cmd.None)
-
-    case ToolboxMsg.PickBrushSize(size) =>
-      (ToolboxAction.pickBrushSize(model, size), Cmd.None)
-
-    case ToolboxMsg.PickTool(tool) =>
-      (ToolboxAction.pickTool(model, tool), Cmd.None)
-
-    case _ => (model, Cmd.None)
+    case Msg.Partial(Left(error)) => (model, Logger.error[IO](error.getMessage))
+    case Msg.Partial(Right(msg))  => update(model)(msg)
+    case msg                      => BellevueAction.runWith(model.withMessage(msg), Cmd.None)
 
   override def view(model: DrawingModel): Html[Msg] =
     BellevueHtml.view(model)

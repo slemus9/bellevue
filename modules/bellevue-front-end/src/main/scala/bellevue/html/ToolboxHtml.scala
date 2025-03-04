@@ -23,7 +23,7 @@ final class ToolboxHtml(model: DrawingModel):
 
   private lazy val viewBrushColorInput: List[Html[Msg]] =
     def buildMessage(str: String) =
-      ControlMsg.Partial(Color.parse(str).map(ToolboxMsg.PickColor.apply))
+      Msg.Partial(Color.parse(str).map(ToolboxMsg.PickColor.apply))
 
     List(
       span("Brush Color: "),
@@ -36,7 +36,7 @@ final class ToolboxHtml(model: DrawingModel):
 
   private lazy val viewBrushSizeInput: List[Html[Msg]] =
     def buildMessage(str: String) =
-      ControlMsg.Partial(Pixels.parse(str).map(ToolboxMsg.PickBrushSize.apply))
+      Msg.Partial(Pixels.parse(str).map(ToolboxMsg.PickBrushSize.apply))
 
     List(
       span("Brush Size: "),

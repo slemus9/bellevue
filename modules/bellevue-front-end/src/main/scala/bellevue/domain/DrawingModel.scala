@@ -11,8 +11,12 @@ import monocle.syntax.all.*
 final case class DrawingModel(
     selectedTool: Tool,
     lineConfig: LineConfig,
-    mouseDragging: Option[MouseDragging]
+    mouseDragging: Option[MouseDragging],
+    receivedMessage: Msg
 ):
+
+  def withMessage(msg: Msg) =
+    copy(receivedMessage = msg)
 
   def clickMouse(startPosition: Point) =
     copy(mouseDragging = Some(MouseDragging.init(startPosition)))
@@ -28,7 +32,8 @@ object DrawingModel:
   val init = DrawingModel(
     selectedTool = Tool.Brush,
     lineConfig = LineConfig.init,
-    mouseDragging = None
+    mouseDragging = None,
+    receivedMessage = ControlMsg.NoAction
   )
 
 /**
