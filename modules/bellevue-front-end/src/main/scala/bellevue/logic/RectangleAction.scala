@@ -15,7 +15,7 @@ object RectangleAction extends Variation.Monoidal[DrawingModel, Cmd[IO, Msg]], D
   override val run: Behavior[DrawingModel, Cmd[IO, Msg]] = partialExecAndMerge: model =>
     (model.receivedMessage, model.mouseDragging) match
       case (MouseMsg.MouseDown(from), None) =>
-        canvas.run(_.setLineStyle(model.lineConfig)) |+| overlaidRectangle.run(_.show)
+        overlaidRectangle.run(_.show)
 
       case (MouseMsg.MouseMove(to), Some(dragging)) =>
         val rectangle = Rectangle(from = dragging.startPosition, to)

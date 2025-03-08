@@ -10,6 +10,7 @@ private val DrawAction: Variation[DrawingModel, Cmd[IO, Msg]] =
     Variation.oneOf(
       BrushAction,
       CircleAction,
+      EraserAction,
       RectangleAction
     ),
     MouseDragUpdateAction
@@ -17,7 +18,7 @@ private val DrawAction: Variation[DrawingModel, Cmd[IO, Msg]] =
 
 val BellevueAction: Variation[DrawingModel, Cmd[IO, Msg]] =
   Variation.oneOf(
-    ControlAction,
+    Variation.sequence(ControlAction, ResetStyleAction),
     ToolboxAction,
     DrawAction
   )

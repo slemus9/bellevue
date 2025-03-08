@@ -23,4 +23,5 @@ enum MouseMsg:
 enum ToolboxMsg:
   case PickBrushSize(size: Pixels)
   case PickColor(color: Color)
+  case PickEraserRadius(radius: Pixels)
   case PickTool(tool: Tool)

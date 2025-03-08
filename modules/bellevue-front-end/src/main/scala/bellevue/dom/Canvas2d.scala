@@ -2,19 +2,19 @@ package bellevue.dom
 
 import bellevue.domain.geometry.*
 import bellevue.domain.geometry.Pixels.px
-import bellevue.domain.tools.LineConfig
+import bellevue.domain.tools.{Color, StyleConfig}
 import cats.effect.IO
 import cats.syntax.all.*
+import org.scalajs.dom.{CanvasRenderingContext2D, Element}
 import org.scalajs.dom.html.Canvas
-import org.scalajs.dom.CanvasRenderingContext2D
-import org.scalajs.dom.Element
 
 /**
   * Represents an HTML canvas that we can use to draw 2D shapes
   */
 final class Canvas2d private (
-    canvas: Canvas,
-    context: CanvasRenderingContext2D
+    var canvas: Canvas,
+    var context: CanvasRenderingContext2D,
+    var fillStyle: Option[Color] = None
 ):
 
   /**
@@ -39,10 +39,13 @@ final class Canvas2d private (
         context.putImageData(currentDrawing, 0, 0)
     }
 
-  def setLineStyle(config: LineConfig): IO[Unit] = IO:
+  def setStyle(config: StyleConfig): IO[Unit] = IO:
     context.lineCap = "round"
     context.strokeStyle = config.color
     context.lineWidth = config.lineWidth
+    this.fillStyle = config.fillStyle
+    this.fillStyle.fold(()): fillStyle =>
+      context.fillStyle = fillStyle
 
   def drawLineSegment(from: Point, to: Point): IO[Unit] = IO:
     context.beginPath()
@@ -51,6 +54,7 @@ final class Canvas2d private (
     context.stroke()
 
   def drawRectangle(rectangle: Rectangle): IO[Unit] = IO:
+    if this.fillStyle.isDefined then context.fill()
     context.strokeRect(
       x = rectangle.topLeft.x,
       y = rectangle.topLeft.y,
@@ -67,14 +71,30 @@ final class Canvas2d private (
       startAngle = 0,
       endAngle = 2 * math.Pi
     )
+    if this.fillStyle.isDefined then context.fill()
     context.stroke()
 
 end Canvas2d
 
 object Canvas2d:
 
+  private var ref: Option[Canvas2d] = None
+
   def get(id: String): IO[Canvas2d] =
     for
-      canvas    <- getById[Canvas](id)
-      context2d <- canvas.getContext("2d").as[CanvasRenderingContext2D].liftTo[IO]
-    yield Canvas2d(canvas, context2d)
+      htmlCanvas <- getById[Canvas](id)
+      context2d  <- htmlCanvas.getContext("2d").as[CanvasRenderingContext2D].liftTo[IO]
+      canvas2d   <- IO(update(htmlCanvas, context2d))
+    yield canvas2d
+
+  private def update(htmlCanvas: Canvas, context: CanvasRenderingContext2D): Canvas2d =
+    ref match
+      case None =>
+        val canvas2d = new Canvas2d(htmlCanvas, context)
+        ref = Some(canvas2d)
+        canvas2d
+
+      case Some(canvas2d) =>
+        canvas2d.canvas = htmlCanvas
+        canvas2d.context = context
+        canvas2d

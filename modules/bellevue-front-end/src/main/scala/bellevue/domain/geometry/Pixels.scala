@@ -7,6 +7,8 @@ opaque type Pixels <: Double = Double
 
 object Pixels:
 
+  def apply(x: Int): Pixels = x
+
   def apply(x: Double): Pixels = x
 
   def parse(str: String): Either[ParseError, Pixels] =

@@ -15,7 +15,7 @@ object CircleAction extends Variation.Monoidal[DrawingModel, Cmd[IO, Msg]], Draw
   override val run: Behavior[DrawingModel, Cmd[IO, Msg]] = partialExecAndMerge: model =>
     (model.receivedMessage, model.mouseDragging) match
       case (MouseMsg.MouseDown(center), None) =>
-        canvas.run(_.setLineStyle(model.lineConfig)) |+| overlaidCircle.run(_.show)
+        overlaidCircle.run(_.show)
 
       case (MouseMsg.MouseMove(to), Some(dragging)) =>
         val circle = Circle(center = dragging.startPosition, to)

@@ -19,3 +19,10 @@ object ControlAction extends Variation.Monoidal[DrawingModel, Cmd[IO, Msg]], Dra
       case ControlMsg.MapToCanvas(point, toMouseMsg) =>
         canvas.command.map: canvas =>
           toMouseMsg(canvas.relativePositionOf(point))
+
+object ResetStyleAction extends SetStyleAction, DrawingEnvironment:
+
+  override def isActive(state: DrawingModel): Boolean =
+    state.receivedMessage match
+      case ControlMsg.ResizeCanvas | ControlMsg.HtmlElementLoaded(BellevueHtml.CanvasId) => true
+      case _                                                                             => false
