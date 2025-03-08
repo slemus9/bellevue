@@ -28,6 +28,8 @@ body {
 
 .toolbox-container {
   position: absolute;
+  z-index: 2;
+  flex-flow: row wrap;
   border-style: solid;
   border-color: red;
   padding: 30px;
@@ -35,6 +37,7 @@ body {
 
 .overlaid-shape {
   position: absolute;
+  z-index: 1;
   visibility: hidden;
   border-style: solid;
   border-color: black;

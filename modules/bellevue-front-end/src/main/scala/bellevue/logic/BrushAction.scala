@@ -13,9 +13,6 @@ object BrushAction extends Variation.Monoidal[DrawingModel, Cmd[IO, Msg]], Drawi
 
   override val run: Behavior[DrawingModel, Cmd[IO, Msg]] = partialExecAndMerge: model =>
     (model.receivedMessage, model.mouseDragging) match
-      case (MouseMsg.MouseDown(from), None) =>
-        canvas.run(_.setLineStyle(model.lineConfig))
-
       case (MouseMsg.MouseMove(to), Some(dragging)) =>
         canvas.run(_.drawLineSegment(from = dragging.latestPosition, to))
 

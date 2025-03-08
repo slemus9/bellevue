@@ -1,8 +1,7 @@
 package bellevue.domain
 
 import bellevue.domain.geometry.Point
-import bellevue.domain.tools.LineConfig
-import bellevue.domain.tools.Tool
+import bellevue.domain.tools.*
 import monocle.syntax.all.*
 
 /**
@@ -10,7 +9,8 @@ import monocle.syntax.all.*
   */
 final case class DrawingModel(
     selectedTool: Tool,
-    lineConfig: LineConfig,
+    brushConfig: StyleConfig,
+    eraserConfig: EraserConfig,
     mouseDragging: Option[MouseDragging],
     receivedMessage: Msg
 ):
@@ -31,7 +31,8 @@ object DrawingModel:
 
   val init = DrawingModel(
     selectedTool = Tool.Brush,
-    lineConfig = LineConfig.init,
+    brushConfig = BrushConfig.init,
+    eraserConfig = EraserConfig.init,
     mouseDragging = None,
     receivedMessage = ControlMsg.NoAction
   )

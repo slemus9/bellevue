@@ -16,9 +16,10 @@ final class ToolboxHtml(model: DrawingModel):
         ++ List(
           viewBrushButton,
           viewCircleButton,
-          viewRectangleButton,
-          viewEraserButton
-        ))*
+          viewRectangleButton
+        )
+        ++ viewEraserRadiusInput
+        ++ List(viewEraserButton))*
     )
 
   private lazy val viewBrushColorInput: List[Html[Msg]] =
@@ -29,7 +30,7 @@ final class ToolboxHtml(model: DrawingModel):
       span("Brush Color: "),
       input(
         `type` := "color",
-        value  := model.lineConfig.color,
+        value  := model.brushConfig.color,
         onChange(buildMessage)
       )
     )
@@ -42,11 +43,27 @@ final class ToolboxHtml(model: DrawingModel):
       span("Brush Size: "),
       input(
         list  := "brush-size-options",
-        value := model.lineConfig.lineWidth.show,
+        value := model.brushConfig.lineWidth.show,
         onChange(buildMessage)
       ),
       datalist(id := "brush-size-options")(
-        LineConfig.LineWidths.map(size => option(size.show))
+        BrushConfig.LineWidths.map(size => option(size.show))
+      )
+    )
+
+  private lazy val viewEraserRadiusInput: List[Html[Msg]] =
+    def buildMessage(str: String) =
+      Msg.Partial(Pixels.parse(str).map(ToolboxMsg.PickEraserRadius.apply))
+
+    List(
+      span("Eraser Radius: "),
+      input(
+        list  := "eraser-radius-options",
+        value := model.eraserConfig.radius.show,
+        onChange(buildMessage)
+      ),
+      datalist(id := "eraser-radius-options")(
+        EraserConfig.EraserRadius.map(size => option(size.show))
       )
     )
 
