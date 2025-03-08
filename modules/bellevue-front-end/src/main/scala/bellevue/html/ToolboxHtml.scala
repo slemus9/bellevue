@@ -24,13 +24,13 @@ final class ToolboxHtml(model: DrawingModel):
 
   private lazy val viewBrushColorInput: List[Html[Msg]] =
     def buildMessage(str: String) =
-      Msg.Partial(Color.parse(str).map(ToolboxMsg.PickColor.apply))
+      Msg.Partial(RGB.parse(str).map(ToolboxMsg.PickColor.apply))
 
     List(
       span("Brush Color: "),
       input(
         `type` := "color",
-        value  := model.brushConfig.color,
+        value  := model.brushConfig.color.toHexString,
         onChange(buildMessage)
       )
     )

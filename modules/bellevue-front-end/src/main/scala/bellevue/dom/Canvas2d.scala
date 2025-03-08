@@ -2,7 +2,7 @@ package bellevue.dom
 
 import bellevue.domain.geometry.*
 import bellevue.domain.geometry.Pixels.px
-import bellevue.domain.tools.{Color, StyleConfig}
+import bellevue.domain.tools.{RGB, StyleConfig}
 import cats.effect.IO
 import cats.syntax.all.*
 import org.scalajs.dom.{CanvasRenderingContext2D, Element}
@@ -14,7 +14,7 @@ import org.scalajs.dom.html.Canvas
 final class Canvas2d private (
     var canvas: Canvas,
     var context: CanvasRenderingContext2D,
-    var fillStyle: Option[Color] = None
+    var fillStyle: Option[RGB] = None
 ):
 
   /**
@@ -41,11 +41,11 @@ final class Canvas2d private (
 
   def setStyle(config: StyleConfig): IO[Unit] = IO:
     context.lineCap = "round"
-    context.strokeStyle = config.color
+    context.strokeStyle = config.color.toHexString
     context.lineWidth = config.lineWidth
     this.fillStyle = config.fillStyle
     this.fillStyle.fold(()): fillStyle =>
-      context.fillStyle = fillStyle
+      context.fillStyle = fillStyle.toHexString
 
   def drawLineSegment(from: Point, to: Point): IO[Unit] = IO:
     context.beginPath()

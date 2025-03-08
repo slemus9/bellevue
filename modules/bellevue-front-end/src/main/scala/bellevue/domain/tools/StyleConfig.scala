@@ -4,9 +4,9 @@ import bellevue.domain.geometry.Pixels
 import io.github.iltotore.iron.autoRefine
 
 final case class StyleConfig(
-    color: Color,
+    color: RGB,
     lineWidth: Pixels,
-    fillStyle: Option[Color]
+    fillStyle: Option[RGB]
 )
 
 opaque type BrushConfig <: StyleConfig = StyleConfig
@@ -14,7 +14,7 @@ opaque type BrushConfig <: StyleConfig = StyleConfig
 object BrushConfig:
 
   val init: BrushConfig = StyleConfig(
-    color = Color("#0047AB"),
+    color = RGB(Uint8(0), Uint8(71), Uint8(171)),
     lineWidth = Pixels(2),
     fillStyle = None
   )
@@ -30,9 +30,9 @@ final case class EraserConfig(
 object EraserConfig:
 
   val EraserStyle = StyleConfig(
-    color = Color.White,
+    color = RGB.White,
     lineWidth = Pixels(1),
-    fillStyle = Some(Color.White)
+    fillStyle = Some(RGB.White)
   )
 
   val init = EraserConfig(style = EraserStyle, radius = Pixels(5))
