@@ -2,7 +2,7 @@ package bellevue.dom
 
 import bellevue.domain.geometry.*
 import bellevue.domain.geometry.Pixels.px
-import bellevue.domain.tools.{RGB, StyleConfig}
+import bellevue.domain.tools.StyleConfig
 import cats.effect.IO
 import cats.syntax.all.*
 import org.scalajs.dom.{CanvasRenderingContext2D, Element}

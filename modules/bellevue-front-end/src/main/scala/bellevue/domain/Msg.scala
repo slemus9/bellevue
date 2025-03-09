@@ -1,7 +1,7 @@
 package bellevue.domain
 
-import bellevue.domain.geometry.{Pixels, Point}
-import bellevue.domain.tools.{RGB, Tool}
+import bellevue.domain.geometry.{Pixels, Point, RGB}
+import bellevue.domain.tools.Tool
 
 type Msg = ControlMsg | MouseMsg | Msg.Partial | ToolboxMsg
 

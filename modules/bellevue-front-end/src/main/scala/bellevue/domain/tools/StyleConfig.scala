@@ -1,6 +1,6 @@
 package bellevue.domain.tools
 
-import bellevue.domain.geometry.Pixels
+import bellevue.domain.geometry.*
 import io.github.iltotore.iron.autoRefine
 
 final case class StyleConfig(
