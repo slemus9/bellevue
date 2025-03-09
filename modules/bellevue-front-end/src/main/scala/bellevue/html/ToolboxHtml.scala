@@ -1,7 +1,7 @@
 package bellevue.html
 
 import bellevue.domain.*
-import bellevue.domain.geometry.Pixels
+import bellevue.domain.geometry.*
 import bellevue.domain.tools.*
 import cats.syntax.show.*
 import tyrian.Html

@@ -1,4 +1,4 @@
-package bellevue.domain.tools
+package bellevue.domain.geometry
 
 import bellevue.domain.ParseError
 
