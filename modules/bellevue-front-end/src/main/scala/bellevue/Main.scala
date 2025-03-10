@@ -1,6 +1,8 @@
 package bellevue
 
 import bellevue.domain.*
+import bellevue.domain.geometry.Pixels.px
+import bellevue.domain.geometry.Point
 import bellevue.html.BellevueHtml
 import bellevue.logic.*
 import bellevue.logic.BellevueAction
@@ -22,6 +24,7 @@ object Main extends TyrianIOApp[Msg, DrawingModel]:
   override def update(model: DrawingModel): Msg => (DrawingModel, Cmd[IO, Msg]) =
     case Msg.Partial(Left(error)) => (model, Logger.error[IO](error.getMessage))
     case Msg.Partial(Right(msg))  => update(model)(msg)
+    case DrawChart                => (model, ChartAction.draw(Point(500.px, 500.px)))
     case msg                      => BellevueAction.runWith(model.withMessage(msg), Cmd.None)
 
   override def view(model: DrawingModel): Html[Msg] =

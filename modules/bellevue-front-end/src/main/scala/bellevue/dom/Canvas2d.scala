@@ -1,6 +1,6 @@
 package bellevue.dom
 
-import bellevue.domain.geometry.*
+import bellevue.domain.geometry.{*, given}
 import bellevue.domain.geometry.Pixels.px
 import bellevue.domain.tools.LineConfig
 import cats.effect.IO
@@ -68,6 +68,51 @@ final class Canvas2d private (
       endAngle = 2 * math.Pi
     )
     context.stroke()
+
+  import bellevue.domain.tools.Color
+  import cats.effect.std.Random
+  import cats.syntax.all.*
+  import io.github.iltotore.iron.autoRefine
+
+  def drawChart(center: Point): IO[Unit] =
+    val origin = relativePositionOf(center)
+
+    val gridStyle = LineConfig(color = Color("#a6a6a6"), lineWidth = 1.px)
+    val lineStyle = LineConfig(color = Color("#1a1aff"), lineWidth = 1.px)
+    val axisStyle = LineConfig(color = Color("#000000"), lineWidth = 2.px)
+
+    val xs = List.iterate(origin.x, len = 21)(_ + 20)
+    val ys = List.iterate(origin.y, len = 21)(_ - 20)
+
+    val horizontalGrid = ys.map(y => (Point(origin.x, y), Point(origin.x + 400, y)))
+    val verticalGrid   = xs.map(x => (Point(x, origin.y), Point(x, origin.y - 400)))
+
+    val drawAxis: IO[Unit] =
+      setLineStyle(axisStyle) >>
+        drawLineSegment(origin, Point(origin.x, origin.y - 400)) >>
+        drawLineSegment(origin, Point(origin.x + 400, origin.y))
+
+    val drawGrid: IO[Unit] =
+      setLineStyle(gridStyle) >>
+        horizontalGrid.traverse_(drawLineSegment) >>
+        verticalGrid.traverse_(drawLineSegment)
+
+    val drawLine: IO[Unit] =
+      for
+        random <- Random.scalaUtilRandom[IO]
+        _      <- setLineStyle(lineStyle)
+        points <- xs.traverse { x =>
+                    random.elementOf(ys).map(y => Point(x, y))
+                  }
+        _      <- points.zip(points.tail).traverse_(drawLineSegment)
+        _      <- points.traverse_ { point =>
+                    drawCircle(Circle(center = point, radius = 2.px))
+                  }
+      yield ()
+
+    drawAxis >> drawGrid >> drawLine
+
+  end drawChart
 
 end Canvas2d
 

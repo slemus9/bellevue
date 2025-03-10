@@ -3,7 +3,9 @@ package bellevue.domain
 import bellevue.domain.geometry.{Pixels, Point}
 import bellevue.domain.tools.{Color, Tool}
 
-type Msg = ControlMsg | MouseMsg | Msg.Partial | ToolboxMsg
+type Msg = ControlMsg | MouseMsg | Msg.Partial | ToolboxMsg | DrawChart.type
+
+object DrawChart
 
 object Msg:
 

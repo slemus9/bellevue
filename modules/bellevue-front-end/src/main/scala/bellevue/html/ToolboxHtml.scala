@@ -17,7 +17,8 @@ final class ToolboxHtml(model: DrawingModel):
           viewBrushButton,
           viewCircleButton,
           viewRectangleButton,
-          viewEraserButton
+          viewEraserButton,
+          button(onClick(DrawChart))("Chart")
         ))*
     )
 
