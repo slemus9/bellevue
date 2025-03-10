@@ -12,4 +12,5 @@ trait SetStyleAction extends Variation.Monoidal[DrawingModel, Cmd[IO, Msg]]:
   override val run: Behavior[DrawingModel, Cmd[IO, Msg]] = partialExecAndMerge: model =>
     model.selectedTool match
       case Tool.Brush | Tool.Circle | Tool.Rectangle => canvas.run(_.setStyle(model.brushConfig))
+      case Tool.ColorFill                            => canvas.run(_.setStyle(model.colorFillConfig.style))
       case Tool.Eraser                               => canvas.run(_.setStyle(model.eraserConfig.style))

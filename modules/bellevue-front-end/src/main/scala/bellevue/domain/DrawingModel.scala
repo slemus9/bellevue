@@ -10,6 +10,7 @@ import monocle.syntax.all.*
 final case class DrawingModel(
     selectedTool: Tool,
     brushConfig: StyleConfig,
+    colorFillConfig: ColorFillConfig,
     eraserConfig: EraserConfig,
     mouseDragging: Option[MouseDragging],
     receivedMessage: Msg
@@ -32,6 +33,7 @@ object DrawingModel:
   val init = DrawingModel(
     selectedTool = Tool.Brush,
     brushConfig = BrushConfig.init,
+    colorFillConfig = ColorFillConfig.init,
     eraserConfig = EraserConfig.init,
     mouseDragging = None,
     receivedMessage = ControlMsg.NoAction

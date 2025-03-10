@@ -10,6 +10,7 @@ private val DrawAction: Variation[DrawingModel, Cmd[IO, Msg]] =
     Variation.oneOf(
       BrushAction,
       CircleAction,
+      ColorFillAction,
       EraserAction,
       RectangleAction
     ),

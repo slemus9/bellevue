@@ -12,7 +12,7 @@ import scala.scalajs.js.typedarray.Uint8ClampedArray
 final class Image private (
     pixels: Array[RGBA],
     width: Int,
-    height: Int
+    val height: Int
 ):
   /**
     * @param x
@@ -49,7 +49,7 @@ final class Image private (
     * @param y
     *   y coordinate of a pixel
     * @return
-    *   get the pixel at position (x, y). If this is an out of bounds position, it returns None
+    *   get the pixel at position (x, y). If this is an out-of-bounds position, it returns None
     */
   def get(x: Int, y: Int): Option[RGBA] =
     Option.when(0 <= x && x < width && 0 <= y && y < height):
@@ -68,6 +68,7 @@ object Image:
 
   private def makePixels(array: Uint8ClampedArray): Either[ParseError, Array[RGBA]] =
     if array.size % 4 == 0 then
+      println(s"Image size: ${array.size}")
       array
         .grouped(4)
         .map { pixelData =>
