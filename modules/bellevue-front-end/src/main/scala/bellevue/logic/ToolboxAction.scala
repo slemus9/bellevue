@@ -39,9 +39,7 @@ object BaseToolboxAction extends Variation.Monoidal[DrawingModel, Cmd[IO, Msg]]:
         model.focus(_.colorFillConfig.color).replace(color)
 
       case ToolboxMsg.SetCanvasImage(image) =>
-        val newModel = model.focus(_.colorFillConfig.canvasImage).replace(Some(image))
-        println(s"Set image of size: ${newModel.colorFillConfig.canvasImage.map(_.height)}")
-        newModel
+        model.focus(_.colorFillConfig.canvasImage).replace(Some(image))
 
 object EraserActivationAction extends Variation.Monoidal[DrawingModel, Cmd[IO, Msg]], DrawingEnvironment:
 
