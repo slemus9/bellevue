@@ -39,6 +39,15 @@ final class Canvas2d private (
         context.putImageData(currentDrawing, 0, 0)
     }
 
+  /**
+    * Get the current image data of the entire area of the canvas
+    */
+  val getImage: IO[Image] =
+    for
+      imageData <- IO(context.getImageData(0, 0, canvas.width, canvas.height))
+      image     <- Image.from(imageData.data, canvas.width, canvas.height).liftTo[IO]
+    yield image
+
   def setStyle(config: StyleConfig): IO[Unit] = IO:
     context.lineCap = "round"
     context.strokeStyle = config.color.toHexString
@@ -52,6 +61,15 @@ final class Canvas2d private (
     context.moveTo(from.x, from.y)
     context.lineTo(to.x, to.y)
     context.stroke()
+
+  def unsafeDrawRectangle(rectangle: Rectangle): Unit =
+    if this.fillStyle.isDefined then context.fill()
+    context.strokeRect(
+      x = rectangle.topLeft.x,
+      y = rectangle.topLeft.y,
+      w = rectangle.width,
+      h = rectangle.height
+    )
 
   def drawRectangle(rectangle: Rectangle): IO[Unit] = IO:
     if this.fillStyle.isDefined then context.fill()

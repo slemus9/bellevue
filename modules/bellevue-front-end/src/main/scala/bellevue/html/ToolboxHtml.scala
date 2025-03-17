@@ -18,6 +18,8 @@ final class ToolboxHtml(model: DrawingModel):
           viewCircleButton,
           viewRectangleButton
         )
+        ++ viewColorFillInput
+        ++ List(viewColorFillButton)
         ++ viewEraserRadiusInput
         ++ List(viewEraserButton))*
     )
@@ -51,6 +53,19 @@ final class ToolboxHtml(model: DrawingModel):
       )
     )
 
+  private lazy val viewColorFillInput: List[Html[Msg]] =
+    def buildMessage(str: String) =
+      Msg.Partial(RGB.parse(str).map(ToolboxMsg.PickFillColor.apply))
+
+    List(
+      span("Fill Color: "),
+      input(
+        `type` := "color",
+        value  := model.colorFillConfig.color.toHexString,
+        onChange(buildMessage)
+      )
+    )
+
   private lazy val viewEraserRadiusInput: List[Html[Msg]] =
     def buildMessage(str: String) =
       Msg.Partial(Pixels.parse(str).map(ToolboxMsg.PickEraserRadius.apply))
@@ -69,6 +84,9 @@ final class ToolboxHtml(model: DrawingModel):
 
   private lazy val viewBrushButton: Html[Msg] =
     button(onClick(ToolboxMsg.PickTool(Tool.Brush)))("Brush")
+
+  private lazy val viewColorFillButton: Html[Msg] =
+    button(onClick(ToolboxMsg.PickTool(Tool.ColorFill)))("Color Fill")
 
   private lazy val viewCircleButton: Html[Msg] =
     button(onClick(ToolboxMsg.PickTool(Tool.Circle)))("Circle")
