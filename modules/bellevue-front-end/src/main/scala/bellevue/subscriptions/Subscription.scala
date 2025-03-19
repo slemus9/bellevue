@@ -1,7 +1,6 @@
 package bellevue.subscriptions
 
 import bellevue.domain.*
-import bellevue.domain.geometry.Pixels.px
 import bellevue.domain.geometry.Point
 import cats.effect.IO
 import org.scalajs.dom
@@ -53,6 +52,6 @@ object Subscription:
     }
 
   private def mousePosition(event: dom.MouseEvent): Point =
-    Point(event.clientX.px, event.clientY.px)
+    Point(event.clientX, event.clientY)
 
 end Subscription

@@ -1,7 +1,7 @@
 package bellevue.logic
 
 import bellevue.dom.*
-import bellevue.html.BellevueHtml
+import bellevue.html.*
 import cats.effect.IO
 import tyrian.Cmd
 
@@ -18,6 +18,9 @@ trait DrawingEnvironment:
 
   protected val overlaidCircle: IO[OverlaidCircle] =
     OverlaidCircle.get(BellevueHtml.OverlaidCircleId)
+
+  protected val toolboxElement: IO[ToolboxElement] =
+    ToolboxElement.get(ToolboxHtml.ToolboxElementId)
 
   extension [A](action: IO[A])
 
