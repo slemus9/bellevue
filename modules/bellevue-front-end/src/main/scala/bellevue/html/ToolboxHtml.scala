@@ -10,7 +10,7 @@ import tyrian.Html.*
 final class ToolboxHtml(model: DrawingModel):
 
   lazy val view: Html[Msg] =
-    div(id := "toolbox", className := "toolbox-container")(
+    div(id := ToolboxHtml.ToolboxElementId, className := "toolbox-container")(
       (viewBrushColorInput
         ++ viewBrushSizeInput
         ++ List(
@@ -98,3 +98,7 @@ final class ToolboxHtml(model: DrawingModel):
     button(onClick(ToolboxMsg.PickTool(Tool.Eraser)))("Eraser")
 
 end ToolboxHtml
+
+object ToolboxHtml:
+
+  val ToolboxElementId = "toolbox"

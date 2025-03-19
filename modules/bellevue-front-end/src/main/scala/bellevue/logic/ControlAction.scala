@@ -17,8 +17,13 @@ object ControlAction extends Variation.Monoidal[DrawingModel, Cmd[IO, Msg]], Dra
         canvas.run(_.resize)
 
       case ControlMsg.MapToCanvas(point, toMouseMsg) =>
-        canvas.command.map: canvas =>
-          toMouseMsg(canvas.relativePositionOf(point))
+        Cmd.Run:
+          toolboxElement
+            .map(_.contains(point))
+            .flatMap {
+              case true  => IO.pure(ControlMsg.NoAction)
+              case false => canvas.map(canvas => toMouseMsg(canvas.relativePositionOf(point)))
+            }
 
 object ResetStyleAction extends SetStyleAction, DrawingEnvironment:
 

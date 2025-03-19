@@ -1,7 +1,6 @@
 package bellevue.dom
 
 import bellevue.domain.geometry.*
-import bellevue.domain.geometry.Pixels.px
 import bellevue.domain.tools.StyleConfig
 import cats.effect.IO
 import cats.syntax.all.*
@@ -21,8 +20,8 @@ final class Canvas2d private (
     * Finds the relative position of a given [[point]] in the window with respect to the canvas dimensions
     */
   def relativePositionOf(point: Point) = Point(
-    x = math.floor(point.x - canvas.getBoundingClientRect().left).px,
-    y = math.floor(point.y - canvas.getBoundingClientRect().top).px
+    x = math.floor(point.x - canvas.getBoundingClientRect().left),
+    y = math.floor(point.y - canvas.getBoundingClientRect().top)
   )
 
   /**
@@ -71,14 +70,8 @@ final class Canvas2d private (
       h = rectangle.height
     )
 
-  def drawRectangle(rectangle: Rectangle): IO[Unit] = IO:
-    if this.fillStyle.isDefined then context.fill()
-    context.strokeRect(
-      x = rectangle.topLeft.x,
-      y = rectangle.topLeft.y,
-      w = rectangle.width,
-      h = rectangle.height
-    )
+  def drawRectangle(rectangle: Rectangle): IO[Unit] =
+    IO(unsafeDrawRectangle(rectangle))
 
   def drawCircle(circle: Circle): IO[Unit] = IO:
     context.beginPath()

@@ -8,8 +8,8 @@ package bellevue.domain.geometry
   */
 final case class Rectangle(topLeft: Point, bottomRight: Point):
 
-  def width: Pixels  = bottomRight.x - topLeft.x
-  def height: Pixels = bottomRight.y - topLeft.y
+  def width: Double  = bottomRight.x - topLeft.x
+  def height: Double = bottomRight.y - topLeft.y
 
 object Rectangle:
 
