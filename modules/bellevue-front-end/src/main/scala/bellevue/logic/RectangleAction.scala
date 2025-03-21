@@ -1,5 +1,6 @@
 package bellevue.logic
 
+import bellevue.dom.DrawingEnvironment
 import bellevue.domain.*
 import bellevue.domain.geometry.Rectangle
 import bellevue.domain.tools.Tool
@@ -15,12 +16,12 @@ object RectangleAction extends Variation.Monoidal[DrawingModel, Cmd[IO, Msg]], D
   override val run: Behavior[DrawingModel, Cmd[IO, Msg]] = partialExecAndMerge: model =>
     (model.receivedMessage, model.mouseDragging) match
       case (MouseMsg.MouseDown(from), None) =>
-        overlaidRectangle.run(_.show)
+        sideEffect(_.overlaidRectangle.refresh.show)
 
       case (MouseMsg.MouseMove(to), Some(dragging)) =>
         val rectangle = Rectangle(from = dragging.startPosition, to)
-        overlaidRectangle.run(_.draw(rectangle))
+        sideEffect(_.overlaidRectangle.refresh.draw(rectangle))
 
       case (MouseMsg.MouseUp(to), Some(dragging)) =>
         val rectangle = Rectangle(from = dragging.startPosition, to)
-        canvas.run(_.drawRectangle(rectangle)) |+| overlaidRectangle.run(_.hide)
+        sideEffect(_.canvas.refresh.drawRectangle(rectangle)) |+| sideEffect(_.overlaidRectangle.refresh.hide)

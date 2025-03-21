@@ -1,5 +1,6 @@
 package bellevue.logic
 
+import bellevue.dom.DrawingEnvironment
 import bellevue.domain.*
 import bellevue.domain.geometry.Circle
 import bellevue.domain.tools.Tool
@@ -15,12 +16,12 @@ object CircleAction extends Variation.Monoidal[DrawingModel, Cmd[IO, Msg]], Draw
   override val run: Behavior[DrawingModel, Cmd[IO, Msg]] = partialExecAndMerge: model =>
     (model.receivedMessage, model.mouseDragging) match
       case (MouseMsg.MouseDown(center), None) =>
-        overlaidCircle.run(_.show)
+        sideEffect(_.overlaidCircle.refresh.show)
 
       case (MouseMsg.MouseMove(to), Some(dragging)) =>
         val circle = Circle(center = dragging.startPosition, to)
-        overlaidCircle.run(_.draw(circle))
+        sideEffect(_.overlaidCircle.refresh.draw(circle))
 
       case (MouseMsg.MouseUp(to), Some(dragging)) =>
         val circle = Circle(center = dragging.startPosition, to)
-        canvas.run(_.drawCircle(circle)) |+| overlaidCircle.run(_.hide)
+        sideEffect(_.canvas.refresh.drawCircle(circle)) |+| sideEffect(_.overlaidCircle.refresh.hide)
