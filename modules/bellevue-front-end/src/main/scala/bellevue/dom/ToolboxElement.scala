@@ -1,10 +1,12 @@
 package bellevue.dom
 
 import bellevue.domain.geometry.Point
-import cats.effect.IO
 import org.scalajs.dom.HTMLElement
 
-final class ToolboxElement(element: HTMLElement):
+/**
+  * Encapsulates the element that holds everything related to the app's toolbox
+  */
+final class ToolboxElement(var element: HTMLElement):
 
   def contains(point: Point): Boolean =
     val area = element.getBoundingClientRect()
@@ -13,5 +15,10 @@ final class ToolboxElement(element: HTMLElement):
 
 object ToolboxElement:
 
-  def get(id: String): IO[ToolboxElement] =
-    getById[HTMLElement](id).map(ToolboxElement.apply)
+  def make(id: String): Ref[ToolboxElement] =
+    Ref.make {
+      ToolboxElement(actions.getById[HTMLElement](id))
+    } { toolboxElement =>
+      toolboxElement.element = actions.getById[HTMLElement](id)
+      toolboxElement
+    }

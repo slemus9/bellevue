@@ -1,5 +1,6 @@
 package bellevue.logic
 
+import bellevue.dom.DrawingEnvironment
 import bellevue.domain.*
 import bellevue.domain.geometry.Circle
 import bellevue.domain.tools.Tool
@@ -21,11 +22,11 @@ object EraserCanvasAction extends Variation.Monoidal[DrawingModel, Cmd[IO, Msg]]
     model.receivedMessage match
       case MouseMsg.MouseMove(to) =>
         val circle = Circle(center = to, radius = model.eraserConfig.radius)
-        canvas.run(_.drawCircle(circle))
+        sideEffect(_.canvas.refresh.drawCircle(circle))
 
       case MouseMsg.MouseUp(to) =>
         val circle = Circle(center = to, radius = model.eraserConfig.radius)
-        canvas.run(_.drawCircle(circle))
+        sideEffect(_.canvas.refresh.drawCircle(circle))
 
 object OverlaidEraserAction extends Variation.Monoidal[DrawingModel, Cmd[IO, Msg]], DrawingEnvironment:
 
@@ -36,4 +37,4 @@ object OverlaidEraserAction extends Variation.Monoidal[DrawingModel, Cmd[IO, Msg
     model.receivedMessage match
       case MouseMsg.MouseMove(to) =>
         val circle = Circle(center = to, radius = model.eraserConfig.radius)
-        overlaidCircle.run(_.draw(circle))
+        sideEffect(_.overlaidCircle.refresh.draw(circle))

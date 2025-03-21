@@ -2,13 +2,12 @@ package bellevue.dom
 
 import bellevue.domain.geometry.Pixels.px
 import bellevue.domain.geometry.Rectangle
-import cats.effect.IO
 import cats.syntax.show.*
 import org.scalajs.dom.HTMLElement
 
-final class OverlaidRectangle(element: HTMLElement) extends OverlaidShape(element):
+final class OverlaidRectangle(var element: HTMLElement) extends OverlaidShape(element):
 
-  def draw(rectangle: Rectangle): IO[Unit] = IO:
+  def draw(rectangle: Rectangle): Unit =
     element.style.left = rectangle.topLeft.x.px.show
     element.style.top = rectangle.topLeft.y.px.show
     element.style.width = rectangle.width.px.show
@@ -16,5 +15,10 @@ final class OverlaidRectangle(element: HTMLElement) extends OverlaidShape(elemen
 
 object OverlaidRectangle:
 
-  def get(id: String): IO[OverlaidRectangle] =
-    getById[HTMLElement](id).map(OverlaidRectangle.apply)
+  def make(id: String): Ref[OverlaidRectangle] =
+    Ref.make {
+      OverlaidRectangle(actions.getById[HTMLElement](id))
+    } { overlaidRectangle =>
+      overlaidRectangle.element = actions.getById[HTMLElement](id)
+      overlaidRectangle
+    }

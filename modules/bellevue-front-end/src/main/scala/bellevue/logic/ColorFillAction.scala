@@ -1,9 +1,8 @@
 package bellevue.logic
 
-import bellevue.dom.Canvas2d
+import bellevue.dom.{Canvas2d, DrawingEnvironment}
 import bellevue.domain.*
 import bellevue.domain.geometry.*
-import bellevue.domain.geometry.Pixels.px
 import bellevue.domain.tools.Tool
 import bellevue.logic.context.{Behavior, Variation}
 import cats.effect.IO
@@ -21,26 +20,26 @@ object ColorFillAction extends Variation.Monoidal[DrawingModel, Cmd[IO, Msg]], D
   override val run: Behavior[DrawingModel, Cmd[IO, Msg]] = partialExecAndMerge: model =>
     (model.receivedMessage, model.colorFillConfig.canvasImage) match
       case (MouseMsg.MouseDown(point), Some(image)) =>
-        Cmd.Run:
+        command { elems =>
           val originPosition @ (x, y) = (point.x.toInt, point.y.toInt)
           image(x, y) match
             case Some(originColor) =>
-              for
-                _        <- canvas.flatMap(floodFill(image, originColor, originPosition))
-                newImage <- canvas.flatMap(_.getImage)
-              yield ToolboxMsg.SetCanvasImage(newImage)
+              val canvas = elems.canvas.refresh
+              floodFill(image, originColor, originPosition, canvas)
+              ToolboxMsg.SetCanvasImage(canvas.getImage)
 
-            case None =>
-              IO.pure(ControlMsg.NoAction)
+            case None => ControlMsg.NoAction
+        }
 
   private def floodFill(
       image: Image,
       originColor: RGBA,
-      originPosition: Position
-  )(canvas: Canvas2d): IO[Unit] = IO:
+      originPosition: Position,
+      canvas: Canvas2d
+  ): Unit =
     exploreImage(image, originColor, originPosition) { (x, y) =>
-      val pixelArea = Rectangle(Point(x.px, y.px), Point((x + 1).px, (y + 1).px))
-      canvas.unsafeDrawRectangle(pixelArea)
+      val pixelArea = Rectangle(Point(x, y), Point(x + 1, y + 1))
+      canvas.drawRectangle(pixelArea)
     }
 
   private def exploreImage(image: Image, originColor: RGBA, originPosition: Position)(f: Position => Unit): Unit =

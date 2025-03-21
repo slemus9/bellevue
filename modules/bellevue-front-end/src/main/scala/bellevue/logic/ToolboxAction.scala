@@ -1,5 +1,6 @@
 package bellevue.logic
 
+import bellevue.dom.DrawingEnvironment
 import bellevue.domain.*
 import bellevue.domain.tools.*
 import bellevue.domain.ToolboxMsg.SetCanvasImage
@@ -49,10 +50,10 @@ object EraserActivationAction extends Variation.Monoidal[DrawingModel, Cmd[IO, M
   override val run: Behavior[DrawingModel, Cmd[IO, Msg]] = partialExecAndMerge: model =>
     model.receivedMessage match
       case ToolboxMsg.PickTool(Tool.Eraser) =>
-        overlaidCircle.run(_.show)
+        sideEffect(_.overlaidCircle.refresh.show)
 
       case ToolboxMsg.PickTool(_) if model.selectedTool == Tool.Eraser =>
-        overlaidCircle.run(_.hide)
+        sideEffect(_.overlaidCircle.refresh.hide)
 
 object ApplyStyleAction extends SetStyleAction, DrawingEnvironment:
 
@@ -67,4 +68,4 @@ object SetColorFillImageAction extends Variation.Monoidal[DrawingModel, Cmd[IO, 
       case _                                   => false
 
   override val run: Behavior[DrawingModel, Cmd[IO, Msg]] = partialExecAndMerge: model =>
-    canvas.command(_.getImage).map(SetCanvasImage.apply)
+    command(elems => SetCanvasImage(elems.canvas.refresh.getImage))

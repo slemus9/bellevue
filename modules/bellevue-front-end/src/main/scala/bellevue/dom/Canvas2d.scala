@@ -1,8 +1,8 @@
 package bellevue.dom
 
+import bellevue.dom.actions.{castTo, throwError}
 import bellevue.domain.geometry.*
 import bellevue.domain.tools.StyleConfig
-import cats.effect.IO
 import cats.syntax.all.*
 import org.scalajs.dom.{CanvasRenderingContext2D, Element}
 import org.scalajs.dom.html.Canvas
@@ -28,40 +28,35 @@ final class Canvas2d private (
     * Resize the canvas with respect to its parent. Useful for reorganizing the canvas content when the browser's window
     * is resized
     */
-  val resize: IO[Unit] =
-    canvas.parentNode.as[Element].liftTo[IO].flatMap { parentNode =>
-      IO:
-        val parentBox      = parentNode.getBoundingClientRect()
-        val currentDrawing = context.getImageData(0, 0, canvas.width - 1, canvas.height - 1)
-        canvas.width = parentBox.width.toInt
-        canvas.height = parentBox.height.toInt
-        context.putImageData(currentDrawing, 0, 0)
-    }
+  def resize: Unit =
+    val parentNode     = canvas.parentElement.castTo[Element]
+    val parentBox      = parentNode.getBoundingClientRect()
+    val currentDrawing = context.getImageData(0, 0, canvas.width - 1, canvas.height - 1)
+    canvas.width = parentBox.width.toInt
+    canvas.height = parentBox.height.toInt
+    context.putImageData(currentDrawing, 0, 0)
 
   /**
     * Get the current image data of the entire area of the canvas
     */
-  val getImage: IO[Image] =
-    for
-      imageData <- IO(context.getImageData(0, 0, canvas.width, canvas.height))
-      image     <- Image.from(imageData.data, canvas.width, canvas.height).liftTo[IO]
-    yield image
+  def getImage: Image =
+    val imageData = context.getImageData(0, 0, canvas.width, canvas.height)
+    Image.from(imageData.data, canvas.width, canvas.height).throwError
 
-  def setStyle(config: StyleConfig): IO[Unit] = IO:
+  def setStyle(config: StyleConfig): Unit =
     context.lineCap = "round"
     context.strokeStyle = config.color.toHexString
     context.lineWidth = config.lineWidth
     this.fillStyle = config.fillStyle
-    this.fillStyle.fold(()): fillStyle =>
-      context.fillStyle = fillStyle.toHexString
+    if fillStyle.isDefined then context.fillStyle = fillStyle.get.toHexString
 
-  def drawLineSegment(from: Point, to: Point): IO[Unit] = IO:
+  def drawLineSegment(from: Point, to: Point): Unit =
     context.beginPath()
     context.moveTo(from.x, from.y)
     context.lineTo(to.x, to.y)
     context.stroke()
 
-  def unsafeDrawRectangle(rectangle: Rectangle): Unit =
+  def drawRectangle(rectangle: Rectangle): Unit =
     if this.fillStyle.isDefined then context.fill()
     context.strokeRect(
       x = rectangle.topLeft.x,
@@ -70,10 +65,7 @@ final class Canvas2d private (
       h = rectangle.height
     )
 
-  def drawRectangle(rectangle: Rectangle): IO[Unit] =
-    IO(unsafeDrawRectangle(rectangle))
-
-  def drawCircle(circle: Circle): IO[Unit] = IO:
+  def drawCircle(circle: Circle): Unit =
     context.beginPath()
     context.arc(
       x = circle.center.x,
@@ -89,23 +81,15 @@ end Canvas2d
 
 object Canvas2d:
 
-  private var ref: Option[Canvas2d] = None
-
-  def get(id: String): IO[Canvas2d] =
-    for
-      htmlCanvas <- getById[Canvas](id)
-      context2d  <- htmlCanvas.getContext("2d").as[CanvasRenderingContext2D].liftTo[IO]
-      canvas2d   <- IO(update(htmlCanvas, context2d))
-    yield canvas2d
-
-  private def update(htmlCanvas: Canvas, context: CanvasRenderingContext2D): Canvas2d =
-    ref match
-      case None =>
-        val canvas2d = new Canvas2d(htmlCanvas, context)
-        ref = Some(canvas2d)
-        canvas2d
-
-      case Some(canvas2d) =>
-        canvas2d.canvas = htmlCanvas
-        canvas2d.context = context
-        canvas2d
+  def make(id: String): Ref[Canvas2d] =
+    Ref.make {
+      val htmlCanvas = actions.getById[Canvas](id)
+      Canvas2d(
+        htmlCanvas,
+        context = htmlCanvas.getContext("2d").castTo[CanvasRenderingContext2D]
+      )
+    } { canvas2d =>
+      canvas2d.canvas = actions.getById[Canvas](id)
+      canvas2d.context = canvas2d.canvas.getContext("2d").castTo[CanvasRenderingContext2D]
+      canvas2d
+    }

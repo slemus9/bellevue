@@ -2,13 +2,12 @@ package bellevue.dom
 
 import bellevue.domain.geometry.Circle
 import bellevue.domain.geometry.Pixels.px
-import cats.effect.IO
 import cats.syntax.show.*
 import org.scalajs.dom.HTMLElement
 
-final class OverlaidCircle(element: HTMLElement) extends OverlaidShape(element):
+final class OverlaidCircle(var element: HTMLElement) extends OverlaidShape(element):
 
-  def draw(circle: Circle): IO[Unit] = IO:
+  def draw(circle: Circle): Unit =
     element.style.left = (circle.center.x - circle.radius).px.show
     element.style.top = (circle.center.y - circle.radius).px.show
     element.style.width = circle.diameter.px.show
@@ -16,5 +15,10 @@ final class OverlaidCircle(element: HTMLElement) extends OverlaidShape(element):
 
 object OverlaidCircle:
 
-  def get(id: String): IO[OverlaidCircle] =
-    getById[HTMLElement](id).map(OverlaidCircle.apply)
+  def make(id: String): Ref[OverlaidCircle] =
+    Ref.make {
+      OverlaidCircle(actions.getById[HTMLElement](id))
+    } { overlaidCircle =>
+      overlaidCircle.element = actions.getById[HTMLElement](id)
+      overlaidCircle
+    }
