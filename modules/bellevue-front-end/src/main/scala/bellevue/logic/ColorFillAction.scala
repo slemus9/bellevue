@@ -48,7 +48,8 @@ object ColorFillAction extends Variation.Monoidal[DrawingModel, Cmd[IO, Msg]], D
 
     while toExplore.nonEmpty do
       val current = toExplore.dequeue()
-      for pos @ (x, y) <- neighbors(current) do
+      for pos <- neighbors(current) do
+        val (x, y) = pos
         if !visited(pos) && image(x, y).exists(_ == originColor) then
           visited += (pos)
           toExplore.enqueue(pos)

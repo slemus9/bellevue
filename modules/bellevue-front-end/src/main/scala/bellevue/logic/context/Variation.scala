@@ -96,7 +96,7 @@ object Variation:
   /**
     * A variation that is able to combine the result of the previously active variation using a monoid instance
     */
-  trait Monoidal[S, A: Monoid as monoid] extends Variation[S, A]:
+  trait Monoidal[S, A](using monoid: Monoid[A]) extends Variation[S, A]:
 
     /**
       * A state transition that does not modify the state, and returns the result of applying the given [[action]] to
