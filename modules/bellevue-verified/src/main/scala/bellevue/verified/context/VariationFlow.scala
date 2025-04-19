@@ -76,11 +76,12 @@ object VariationFlow:
   //   override def next: Variation[DrawingModel, Msg] = new MouseDragUpdateAction
 
   def oneOfLaw(previous: Msg, state: DrawingModel): Boolean =
-    val mouseDrag = new MouseDragUpdateAction
-    List(new BrushAction, new CircleAction, new ColorFillAction, new RectangleAction).exists { v =>
-      v.isActive(state) ==> {
-        val (newState, _) = v.run(previous, state)
-        mouseDrag.isActive(newState)
+    val drawActions     = List(new BrushAction, new CircleAction, new ColorFillAction, new RectangleAction)
+    val mouseDragUpdate = new MouseDragUpdateAction
+    drawActions.forall { action =>
+      action.isActive(state) ==> {
+        val (newState, _) = action.run(previous, state)
+        mouseDragUpdate.isActive(newState)
       }
     }.holds
 
