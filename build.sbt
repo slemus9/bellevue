@@ -22,8 +22,9 @@ lazy val bellevueFrontEnd = module("bellevue-front-end")
       "org.typelevel"       %% "cats-core"    % Dependencies.cats,
       "io.github.iltotore" %%% "iron"         % Dependencies.iron,
       "dev.optics"         %%% "monocle-core" % Dependencies.monocle,
-      ("io.indigoengine"   %%% "tyrian-io"    % Dependencies.tyrian),
-      "org.scala-js"       %%% "scalajs-dom"  % Dependencies.scalajsDom
+      "io.indigoengine"    %%% "tyrian-io"    % Dependencies.tyrian,
+      "org.scala-js"       %%% "scalajs-dom"  % Dependencies.scalajsDom,
+      "io.scalaland"       %%% "chimney"      % Dependencies.chimney
     ),
     scalaJSLinkerConfig ~= { _.withModuleKind(ModuleKind.CommonJSModule) }
   )

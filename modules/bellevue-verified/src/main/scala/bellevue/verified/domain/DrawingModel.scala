@@ -1,4 +1,4 @@
-package bellevue.domain
+package bellevue.verified.domain
 
 import stainless.lang.Option
 

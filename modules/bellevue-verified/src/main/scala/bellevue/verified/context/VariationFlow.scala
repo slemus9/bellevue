@@ -1,9 +1,8 @@
 package bellevue.verified.context
 
-import bellevue.domain.*
+import bellevue.verified.domain.{DrawingModel, Msg, Tool}
 import stainless.annotation.law
 import stainless.collection.List
-import stainless.lang.*
 import stainless.lang.BooleanDecorations
 
 object VariationFlow:

@@ -1,7 +1,7 @@
 package bellevue.verified.context
 
-import bellevue.domain.*
-import bellevue.domain.MouseMsg.MouseDown
+import bellevue.verified.domain.{DrawingModel, MouseMsg, Msg, Tool}
+import bellevue.verified.domain.MouseMsg.MouseDown
 import stainless.annotation.law
 import stainless.lang.*
 import stainless.lang.BooleanDecorations
