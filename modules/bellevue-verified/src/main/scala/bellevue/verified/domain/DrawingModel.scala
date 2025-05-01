@@ -4,9 +4,11 @@ import stainless.lang.Option
 
 final case class DrawingModel(
     selectedTool: Tool,
+    brushConfig: StyleConfig,
+    colorFillConfig: ColorFillConfig,
+    eraserConfig: EraserConfig,
     mouseDragging: Option[MouseDragging],
-    receivedMessage: Msg,
-    canvasImage: Option[Image]
+    receivedMessage: Msg
 )
 
 final case class MouseDragging(

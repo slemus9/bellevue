@@ -1,13 +1,14 @@
 package bellevue.verified.domain
 
-// type Msg = ControlMsg | MouseMsg | ToolboxMsg
+import stainless.lang.Either
 
 sealed abstract class Msg
 
 object Msg:
-  final case class Control(message: ControlMsg) extends Msg
-  final case class Mouse(message: MouseMsg)     extends Msg
-  final case class Toolbox(message: ToolboxMsg) extends Msg
+  final case class Control(message: ControlMsg)               extends Msg
+  final case class Mouse(message: MouseMsg)                   extends Msg
+  final case class Toolbox(message: ToolboxMsg)               extends Msg
+  final case class Partial(msgOrError: Either[AppError, Msg]) extends Msg
 
 sealed abstract class ControlMsg
 
@@ -27,9 +28,9 @@ object MouseMsg:
 sealed abstract class ToolboxMsg
 
 object ToolboxMsg:
-  final case class PickBrushSize(size: BigInt)      extends ToolboxMsg
+  final case class PickBrushSize(size: Pixels)      extends ToolboxMsg
   final case class PickColor(color: RGB)            extends ToolboxMsg
-  final case class PickEraserRadius(radius: BigInt) extends ToolboxMsg
+  final case class PickEraserRadius(radius: Pixels) extends ToolboxMsg
   final case class PickFillColor(color: RGB)        extends ToolboxMsg
   final case class PickTool(tool: Tool)             extends ToolboxMsg
   final case class SetCanvasImage(image: Image)     extends ToolboxMsg

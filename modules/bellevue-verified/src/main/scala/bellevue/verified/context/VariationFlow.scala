@@ -44,15 +44,6 @@ object VariationFlow:
 
     override def run(previous: Msg, state: DrawingModel): (DrawingModel, Msg) = (state, previous)
 
-  final class ColorFillAction extends Variation[DrawingModel, Msg]:
-
-    override def isActive(state: DrawingModel): Boolean =
-      state.selectedTool == Tool.ColorFill &&
-        state.receivedMessage.isInstanceOf[Msg.Mouse] &&
-        state.canvasImage.isDefined
-
-    override def run(previous: Msg, state: DrawingModel): (DrawingModel, Msg) = (state, previous)
-
   final class RectangleAction extends Variation[DrawingModel, Msg]:
 
     override def isActive(state: DrawingModel): Boolean =
@@ -75,7 +66,7 @@ object VariationFlow:
   //   override def next: Variation[DrawingModel, Msg] = new MouseDragUpdateAction
 
   def oneOfLaw(previous: Msg, state: DrawingModel): Boolean =
-    val drawActions     = List(new BrushAction, new CircleAction, new ColorFillAction, new RectangleAction)
+    val drawActions     = List(new BrushAction, new CircleAction, new RectangleAction)
     val mouseDragUpdate = new MouseDragUpdateAction
     drawActions.forall { action =>
       action.isActive(state) ==> {
