@@ -5,7 +5,7 @@ import bellevue.logic.context.Variation
 import cats.effect.IO
 import tyrian.Cmd
 
-private val DrawAction: Variation[DrawingModel, Cmd[IO, Msg]] =
+val DrawAction: Variation[DrawingModel, Cmd[IO, Msg]] =
   Variation.sequence(
     Variation.oneOf(
       BrushAction,

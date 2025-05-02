@@ -9,7 +9,7 @@ import io.scalaland.chimney.Transformer
 
 trait VariationTransformers:
 
-  given [S, S1, A](using
+  given verifiedVariation[S, S1, A](using
       isoS: Iso[S, S1]
   ): Transformer[verified.Variation[S, A], Variation[S1, A]] = variation =>
     new Variation[S1, A]:
