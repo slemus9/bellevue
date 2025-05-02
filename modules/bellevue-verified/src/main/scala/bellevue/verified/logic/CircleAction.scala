@@ -10,7 +10,7 @@ import stainless.lang.StaticChecks.*
 final class CircleAction extends Variation[DrawingModel, Cmd]:
 
   override def isActive(model: DrawingModel): Boolean =
-    model.selectedTool == Tool.Circle && model.receivedMessage.isInstanceOf[Msg.Mouse]
+    model.selectedTool == Tool.Circle && Msg.isMouseMsg(model.receivedMessage)
 
   override def run(previous: Cmd, model: DrawingModel): (DrawingModel, Cmd) =
     require(this.isActive(model))

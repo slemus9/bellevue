@@ -50,4 +50,10 @@ object Cmd:
       val show                                 = OverlaidRectangle.Show
       val hide                                 = OverlaidRectangle.Hide
       def draw(rectangle: Rectangle.FromEdges) = OverlaidRectangle.Draw(rectangle)
+
+      def isVisible(cmd: Cmd): Boolean = cmd match
+        case Combine(cmd1, cmd2)    => isVisible(cmd1) || isVisible(cmd2)
+        case OverlaidRectangle.Show => true
+        case _                      => false
+
 end Cmd

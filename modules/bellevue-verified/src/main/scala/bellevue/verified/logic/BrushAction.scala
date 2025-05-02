@@ -11,7 +11,7 @@ final class BrushAction extends Variation[DrawingModel, Cmd]:
 
   override def isActive(model: DrawingModel): Boolean =
     model.selectedTool == Tool.Brush &&
-      model.receivedMessage.isInstanceOf[Msg.Mouse] &&
+      Msg.isMouseMsg(model.receivedMessage) &&
       model.mouseDragging.isDefined
 
   override def run(previous: Cmd, model: DrawingModel): (DrawingModel, Cmd) =

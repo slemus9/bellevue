@@ -9,7 +9,7 @@ import stainless.lang.StaticChecks.*
 final class MouseDragUpdateAction extends Variation[DrawingModel, Cmd]:
 
   override def isActive(model: DrawingModel): Boolean =
-    model.receivedMessage.isInstanceOf[Msg.Mouse]
+    Msg.isMouseMsg(model.receivedMessage)
 
   override def run(previous: Cmd, model: DrawingModel): (DrawingModel, Cmd) =
     require(this.isActive(model))

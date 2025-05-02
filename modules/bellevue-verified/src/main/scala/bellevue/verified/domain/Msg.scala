@@ -10,6 +10,18 @@ object Msg:
   final case class Toolbox(message: ToolboxMsg)               extends Msg
   final case class Partial(msgOrError: Either[AppError, Msg]) extends Msg
 
+  def isMouseMove(msg: Msg): Boolean = msg match
+    case Msg.Mouse(MouseMsg.MouseMove(_)) => true
+    case _                                => false
+
+  def isMouseUp(msg: Msg): Boolean = msg match
+    case Msg.Mouse(MouseMsg.MouseUp(_)) => true
+    case _                              => false
+
+  def isMouseMsg(msg: Msg): Boolean = msg match
+    case Msg.Mouse(_) => true
+    case _            => false
+
 sealed abstract class ControlMsg
 
 object ControlMsg:

@@ -1,7 +1,5 @@
 package bellevue.verified.context
 
-import bellevue.verified.domain.{DrawingModel, MouseMsg, Msg, Tool}
-import bellevue.verified.domain.MouseMsg.MouseDown
 import stainless.annotation.law
 import stainless.lang.*
 import stainless.lang.BooleanDecorations
@@ -17,6 +15,11 @@ abstract class Variation[S, A]:
 
 object Variation:
 
+  /**
+    * Type that verifies a dependency relation that we care about in this application. This relation states that,
+    * whenever the first function is active and is applied to any previous: A and state: S values, the second function
+    * should be active with respect to the new state
+    */
   abstract class Chainable[S, A]:
 
     def v1: Variation[S, A]
@@ -28,6 +31,11 @@ object Variation:
         val (newState, _) = v1.run(previous, state)
         v2.isActive(newState)
       }
+
+/**
+  * Examples of valid Chainable instances
+  */
+object Example:
 
   final class V1 extends Variation[Option[BigInt], String]:
 
@@ -52,40 +60,6 @@ object Variation:
         case None()  => (Some(BigInt("1")), "V3")
         case Some(x) => (Some(x + 1), "V2")
 
-  final case class Cmd(
-      overlaidRectangleVisible: Boolean
-  )
-
-  final class V3 extends Variation[DrawingModel, Option[Cmd]]:
-    override def isActive(state: DrawingModel): Boolean =
-      state.selectedTool == Tool.Rectangle &&
-        state.receivedMessage.isInstanceOf[Msg.Mouse] &&
-        state.mouseDragging.isDefined
-
-    override def run(previous: Option[Cmd], state: DrawingModel): (DrawingModel, Option[Cmd]) =
-      require(this.isActive(state))
-      (state.receivedMessage, state.mouseDragging) match
-        case (Msg.Mouse(MouseMsg.MouseDown(to)), None()) =>
-          (state, Some(Cmd(true)))
-
-        case _ => (state, None())
-
-  // def wrongState(
-  //     prev: Option[Cmd],
-  //     mouseDown: MouseMsg.MouseDown,
-  //     model: DrawingModel
-  // ): Boolean =
-  //   val action      = new V3
-  //   val inputModel  = model.copy(
-  //     selectedTool = Tool.Rectangle,
-  //     receivedMessage = Msg.Mouse(mouseDown),
-  //     mouseDragging = None()
-  //   )
-  //   val (_, result) = action.run(prev, inputModel)
-  //   result.exists(_.overlaidRectangleVisible)
-
-  val chain = new Chainable[Option[BigInt], String]:
+  val chain = new Variation.Chainable[Option[BigInt], String]:
     override def v1: Variation[Option[BigInt], String] = new V1
     override def v2: Variation[Option[BigInt], String] = new V2
-
-end Variation

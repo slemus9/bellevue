@@ -9,8 +9,8 @@ import stainless.lang.StaticChecks.*
 
 final class RectangleAction extends Variation[DrawingModel, Cmd]:
 
-  override def isActive(state: DrawingModel): Boolean =
-    state.selectedTool == Tool.Rectangle && state.receivedMessage.isInstanceOf[Msg.Mouse]
+  override def isActive(model: DrawingModel): Boolean =
+    model.selectedTool == Tool.Rectangle && Msg.isMouseMsg(model.receivedMessage)
 
   override def run(previous: Cmd, model: DrawingModel): (DrawingModel, Cmd) =
     require(this.isActive(model))
