@@ -20,8 +20,7 @@ object Properties:
   val drawActions = List(
     brushAction,
     circleAction,
-    rectangleAction,
-    eraserCanvasAction
+    rectangleAction
   )
 
   val brushChain = new Chainable[DrawingModel, Cmd]:
@@ -56,22 +55,35 @@ object Properties:
     Cmd.syntax.overlaidRectangle.isVisible(result).holds
 
   /**
+    * Helper property to verify that the dependency relation between the given [[action]] and the
+    * [[mouseDragUpdateAction]] is consistent, as stated by the implication relation from the [[Chainable]] type
+    */
+  def isChainable(previous: Cmd, model: DrawingModel)(action: Variation[DrawingModel, Cmd]): Boolean =
+    action.isActive(model) ==> {
+      val (newModel, _) = action.run(previous, model)
+      mouseDragUpdateAction.isActive(newModel)
+    }
+
+  /**
     * Property that verifies the dependency between all the drawing actions and the mouseDragUpdateAction. The mouse
     * dragging update should always happen after any drawing action in the composition chain. We must ensure that the
     * activation predicates and state manipulation of the drawing actions are consistent by enforcing the implication
     * from the Chainable type
     */
-  def drawActionChain(previous: Cmd, model: DrawingModel): Boolean =
-    val msg             = model.receivedMessage
+  def drawActionsChain(previous: Cmd, model: DrawingModel): Boolean =
+    drawActions.forall(isChainable(previous, model)).holds
+
+  def eraserActionsChain(previous: Cmd, model: DrawingModel): Boolean =
+    val msg = model.receivedMessage
+
     val mouseMsgSubtype = (
       Msg.isMouseMove(msg) || Msg.isMouseUp(msg)
     ) ==> Msg.isMouseMsg(msg)
 
-    drawActions.forall { action =>
-      action.isActive(model) ==> {
-        val (newModel, _) = action.run(previous, model)
-        mouseDragUpdateAction.isActive(newModel)
-      }.because(mouseMsgSubtype)
-    }.holds
+    val property =
+      isChainable(previous, model)(eraserCanvasAction).because(mouseMsgSubtype) &&
+        isChainable(previous, model)(overlaidEraserAction).because(mouseMsgSubtype)
+
+    property.holds
 
 end Properties
