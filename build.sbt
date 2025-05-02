@@ -1,4 +1,5 @@
 import org.typelevel.sbt.tpolecat.DevMode
+import org.typelevel.scalacoptions.ScalacOptions
 
 inThisBuild(
   Seq(
@@ -11,18 +12,30 @@ inThisBuild(
 
 lazy val root = project
   .in(file("."))
-  .aggregate(bellevueFrontEnd)
+  .aggregate(bellevueFrontEnd, bellevueVerified)
 
 lazy val bellevueFrontEnd = module("bellevue-front-end")
   .enablePlugins(ScalaJSPlugin)
+  .dependsOn(bellevueVerified)
   .settings(
     libraryDependencies ++= Seq(
-      "dev.optics"         %%% "monocle-core" % "3.1.0",
-      "io.github.iltotore" %%% "iron"         % "2.6.0",
-      "io.indigoengine"    %%% "tyrian-io"    % "0.12.0",
-      "org.scala-js"       %%% "scalajs-dom"  % "2.2.0"
+      "org.typelevel"       %% "cats-core"    % Dependencies.cats,
+      "io.github.iltotore" %%% "iron"         % Dependencies.iron,
+      "dev.optics"         %%% "monocle-core" % Dependencies.monocle,
+      "io.indigoengine"    %%% "tyrian-io"    % Dependencies.tyrian,
+      "org.scala-js"       %%% "scalajs-dom"  % Dependencies.scalajsDom,
+      "io.scalaland"       %%% "chimney"      % Dependencies.chimney
     ),
     scalaJSLinkerConfig ~= { _.withModuleKind(ModuleKind.CommonJSModule) }
+  )
+
+lazy val bellevueVerified = module("bellevue-verified")
+  .enablePlugins(StainlessPlugin)
+  .settings(
+    libraryDependencies ++= Seq(
+      "org.typelevel" %% "cats-core" % Dependencies.cats
+    ),
+    Compile / scalacOptions += "-Wconf:src=target/.*:silent"
   )
 
 def module(name: String): Project =

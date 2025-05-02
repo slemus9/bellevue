@@ -9,10 +9,10 @@ import scala.scalajs.js.typedarray.Uint8ClampedArray
   * Represents the Image Data taken from an HTML canvas as specified here:
   * https://developer.mozilla.org/en-US/docs/Web/API/ImageData
   */
-final class Image private (
+final case class Image(
     pixels: Uint8ClampedArray,
     width: Int,
-    val height: Int
+    height: Int
 ):
   /**
     * @param x
